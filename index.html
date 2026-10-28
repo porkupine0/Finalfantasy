@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="FF7R Guide">
+<meta name="theme-color" content="#0b1a17">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1a17'/%3E%3Ccircle cx='32' cy='32' r='17' fill='%2335e0a1'/%3E%3Ccircle cx='26' cy='26' r='6' fill='%23d6fff0'/%3E%3C/svg%3E">
+<title>FF7 Remake Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Figtree:wght@400;600;700&display=swap" crossorigin>
+<style>
+:root{
+  --bg:#eef3f1; --surface:#ffffff; --surface-2:#e2ebe7; --ink:#10201c; --muted:#53655f; --line:#cfdcd7;
+  --accent:#0d8a63; --accent-ink:#ffffff; --mako:#0d8a63; --mako-bg:#d8f3e8;
+  --warn:#a3410f; --warn-bg:#fde8dc; --gold:#8a6300; --gold-bg:#fbefcc; --blue:#2453a6; --blue-bg:#e1eafb;
+  --violet:#6b3fa0; --violet-bg:#efe5fb;
+  --shadow:0 1px 2px rgba(16,32,28,.06),0 6px 18px rgba(16,32,28,.07);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --bg:#08110f; --surface:#101e1a; --surface-2:#172a25; --ink:#e8f5f0; --muted:#9db3ab; --line:#25403a;
+  --accent:#35e0a1; --accent-ink:#06120f; --mako:#35e0a1; --mako-bg:#0f3a2c;
+  --warn:#ff9c6b; --warn-bg:#3b1d10; --gold:#f2c14e; --gold-bg:#3a2f10; --blue:#8fb4ff; --blue-bg:#16264a;
+  --violet:#c7a2ff; --violet-bg:#2a1a42;
+  --shadow:none;
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#08110f; --surface:#101e1a; --surface-2:#172a25; --ink:#e8f5f0; --muted:#9db3ab; --line:#25403a;
+  --accent:#35e0a1; --accent-ink:#06120f; --mako:#35e0a1; --mako-bg:#0f3a2c;
+  --warn:#ff9c6b; --warn-bg:#3b1d10; --gold:#f2c14e; --gold-bg:#3a2f10; --blue:#8fb4ff; --blue-bg:#16264a;
+  --violet:#c7a2ff; --violet-bg:#2a1a42;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Figtree",system-ui,sans-serif;padding-inline:16px;padding-block:18px 64px}
+.wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:"Cinzel",Georgia,serif;margin:0;text-wrap:balance;letter-spacing:.01em}
+h1{font-size:24px;font-weight:700}
+h2{font-size:19px;font-weight:700}
+h3{font-size:15px;font-weight:700;color:var(--accent);font-family:"Figtree",system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em}
+p{margin:0}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo svg{width:40px;height:40px;flex:none}
+.sub{font-size:13px;color:var(--muted)}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;position:sticky;top:0;z-index:5;background:var(--bg);padding-block:8px}
+.tab{padding:9px 2px;border-radius:10px;font-size:14px}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button,select,input{font:inherit;color:var(--ink)}
+button{cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:10px 14px;font-weight:600}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.small{padding:6px 10px;font-size:14px}
+.ghost{background:transparent}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
+.hint{font-size:14px;color:var(--muted)}
+.row{display:flex;align-items:center;gap:10px}
+.grow{flex:1;min-width:0}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{padding:6px 11px;border-radius:999px;font-size:14px}
+.opt[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+input[type=search],select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface)}
+
+/* progress */
+.bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .25s}
+.num{font-variant-numeric:tabular-nums}
+
+/* chapters */
+details.ch{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+details.ch[open]{border-color:var(--accent)}
+details.ch>summary{list-style:none;cursor:pointer;padding:14px 16px;display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center}
+details.ch>summary::-webkit-details-marker{display:none}
+.chno{font-family:"Cinzel",serif;font-weight:700;font-size:20px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--mako-bg);color:var(--mako);grid-row:1 / 3}
+.ch.done .chno{background:var(--accent);color:var(--accent-ink)}
+.chtitle{font-weight:700}
+.chmeta{font-size:13px;color:var(--muted);grid-column:2}
+.chcount{grid-row:1 / 3;grid-column:3;font-size:13px;color:var(--muted);text-align:right}
+.here{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;background:var(--gold-bg);color:var(--gold);border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+.chbody{padding:0 16px 16px;display:flex;flex-direction:column;gap:14px}
+.story{font-size:15px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px}
+.callout{border-radius:10px;padding:10px 12px;font-size:14px;background:var(--warn-bg);color:var(--ink);border-left:4px solid var(--warn)}
+.callout b{color:var(--warn)}
+.callout.info{background:var(--blue-bg);border-left-color:var(--blue)}
+.callout.info b{color:var(--blue)}
+ul.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+li.item{display:grid;grid-template-columns:28px 1fr;gap:2px 10px;align-items:start;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface)}
+li.item.got{background:var(--surface-2);border-color:transparent}
+li.item.got .itxt{text-decoration:line-through;text-decoration-color:var(--muted);color:var(--muted)}
+li.item input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--accent);cursor:pointer}
+.itxt{font-weight:600}
+.inote{grid-column:2;font-size:13.5px;color:var(--muted)}
+.tag{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:6px;padding:1px 6px;margin-right:6px;vertical-align:1px}
+.t-quest{background:var(--blue-bg);color:var(--blue)}
+.t-disc{background:var(--violet-bg);color:var(--violet)}
+.t-script{background:var(--gold-bg);color:var(--gold)}
+.t-weapon{background:var(--warn-bg);color:var(--warn)}
+.t-materia{background:var(--mako-bg);color:var(--mako)}
+.t-gear{background:var(--surface-2);color:var(--ink)}
+.t-miss{background:var(--warn);color:var(--surface)}
+.t-boss{background:var(--ink);color:var(--bg)}
+.t-colo{background:var(--gold-bg);color:var(--gold)}
+.tips{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:15px}
+.boss{border:1px dashed var(--line);border-radius:10px;padding:10px 12px;font-size:14.5px}
+.boss b{font-family:"Cinzel",serif}
+
+/* builds */
+.char{display:flex;flex-direction:column;gap:10px}
+.char h2{display:flex;align-items:center;gap:8px}
+.role{font-family:"Figtree",sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);white-space:nowrap}
+.mat{display:flex;flex-wrap:wrap;gap:5px}
+.mat span{font-size:13px;padding:2px 8px;border-radius:99px;background:var(--mako-bg);color:var(--mako);font-weight:600}
+.mat span.pair{background:var(--violet-bg);color:var(--violet)}
+
+/* tips */
+.tipgrp{display:flex;flex-direction:column;gap:8px}
+.tip{padding:10px 12px;border-radius:10px;background:var(--surface-2)}
+.tip b{display:block;margin-bottom:2px}
+
+.empty{text-align:center;color:var(--muted);padding:24px}
+footer{font-size:13px;color:var(--muted);text-align:center}
+[hidden]{display:none!important}
+@media (max-width:420px){ .tab{font-size:13px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="brand">
+    <div class="logo">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0b1a17"/><circle cx="32" cy="32" r="17" fill="#35e0a1"/><circle cx="32" cy="32" r="17" fill="none" stroke="#d6fff0" stroke-opacity=".4" stroke-width="2"/><circle cx="26" cy="26" r="6" fill="#d6fff0"/></svg>
+      <div>
+        <h1>FF7 Remake Guide</h1>
+        <div class="sub">Intergrade · Normal · 100% run</div>
+      </div>
+    </div>
+    <button class="small ghost" id="themeBtn" aria-label="Toggle light or dark theme">◐</button>
+  </header>
+
+  <section class="panel" aria-label="Overall progress">
+    <div class="row"><div class="grow"><b>Overall loot</b> <span class="sub num" id="totNum"></span></div>
+      <label class="sub" for="curCh">I'm on</label>
+      <select id="curCh" style="width:auto"></select>
+    </div>
+    <div class="bar"><i id="totBar"></i></div>
+  </section>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="walk">Chapters</button>
+    <button class="tab" role="tab" data-tab="hunt">Checklists</button>
+    <button class="tab" role="tab" data-tab="builds">Builds</button>
+    <button class="tab" role="tab" data-tab="tips">Tips</button>
+    <button class="tab" role="tab" data-tab="yuffie">Yuffie</button>
+  </nav>
+
+  <main id="walk" class="view" style="display:flex;flex-direction:column;gap:10px"></main>
+
+  <main id="hunt" class="view" style="display:flex;flex-direction:column;gap:12px">
+    <div class="panel">
+      <input type="search" id="q" placeholder="Search items, quests, bosses…" aria-label="Search">
+      <div class="opts" id="filters"></div>
+      <label class="row hint"><input type="checkbox" id="hideGot"> Hide what I already have</label>
+    </div>
+    <div id="huntList" style="display:flex;flex-direction:column;gap:12px"></div>
+  </main>
+
+  <main id="builds" class="view" style="display:flex;flex-direction:column;gap:12px"></main>
+  <main id="tips" class="view" style="display:flex;flex-direction:column;gap:12px"></main>
+  <main id="yuffie" class="view" style="display:flex;flex-direction:column;gap:10px"></main>
+
+  <footer>Compiled from community guides. Tick boxes save on this device only.<br><button class="small ghost" id="resetBtn">Reset all progress</button></footer>
+</div>
+
+<script>
+// ---------- data ----------
+// item: [id, tag, text, note]
+// tags: quest disc script weapon materia gear miss colo boss
+const TAGS = { quest:"Side quest", disc:"Music disc", script:"Manuscript", weapon:"Weapon", materia:"Materia", gear:"Gear", miss:"Missable", colo:"Colosseum" };
+
+const CHAPTERS = [
+{ n:1, t:"The Destruction of Mako Reactor 1", where:"Mako Reactor 1",
+  story:"Cloud and Barret's bombing run with Avalanche. You finished this in the demo; your save carries over.",
+  callouts:[["info","Demo bonus","Because your demo save carried over, you should have the <b>Revival Earrings</b> and <b>Survival Set</b>. Check your Items/Equipment. The Survival Set gives early accessories and consumables."]],
+  items:[
+    ["c1-bonus","gear","Demo bonus: Revival Earrings + Survival Set","Confirm they're in your inventory before Chapter 2."],
+  ],
+  boss:[["Scorpion Sentinel","Done ✔"]],
+  tips:[]
+},
+{ n:2, t:"Fateful Encounters", where:"Sector 8",
+  story:"Escape the blast zone, bump into Aerith (buy the flower), dodge Shinra checkpoints and catch the train to Sector 7.",
+  items:[
+    ["c2-boxes","gear","Smash every Shinra box along the escape route","They give items and gil. Boxes in side alleys are easy to miss."],
+    ["c2-chests","gear","Check every dead-end street for chests","The route branches several times. If a path looks optional, it usually has something at the end."],
+  ],
+  boss:[],
+  tips:["Block (R) cuts most damage and still builds ATB. Get used to blocking now.","Cloud's Punisher Mode counters melee attacks while you block. Don't use Punisher against ranged enemies."]
+},
+{ n:3, t:"Home Sweet Slum", where:"Sector 7 Slums",
+  story:"Seventh Heaven, Tifa, the Sector 7 mercenary odd jobs, and the first side-quest hub. The night ends with the Avalanche meeting.",
+  callouts:[["warn","First hub","All six side quests (and the Chadley intro) close when you go to sleep and the chapter moves on. Clear them all first."]],
+  items:[
+    ["c3-chadley","quest","Chadley's Report","Assess 2 enemy types. This unlocks Battle Intel reports and Chadley's materia shop. Do it first."],
+    ["c3-rat","quest","Rat Problem","Reward: 5 Hi-Potions + Cleanse materia at a discount."],
+    ["c3-factory","quest","Nuisance in the Factory","Reward: 500 gil."],
+    ["c3-cats","quest","Lost Friends","Find the 3 lost cats. Reward: Maiden's Kiss."],
+    ["c3-prowl","quest","On the Prowl","Reward: Elixir."],
+    ["c3-graveyard","quest","Just Flew in from the Graveyard","Appears after the others. Reward: Star Bracelet."],
+    ["c3-iron","weapon","Iron Blade (Cloud)","Story reward after the Scrap Boulevard trip. Learn Triple Slash on it."],
+    ["c3-d-prelude","disc","The Prelude","Sector 7 item shop."],
+    ["c3-d-tifa","disc","Tifa's Theme","Seventh Heaven (jukebox / Tifa's bar)."],
+    ["c3-d-barret","disc","Barret's Theme","Item shop near the Sector 7 Slums train station."],
+    ["c3-d-hiphop","disc","Hip Hop de Chocobo","Sector 7 Slums vendor. Check every shop's disc list."],
+  ],
+  boss:[],
+  tips:["Talk to Chadley after each report. New materia becomes available to <i>buy</i> from him.","Buy Cleanse after Rat Problem; it's cheap then."]
+},
+{ n:4, t:"Mad Dash", where:"Upper Sector 7 · Sector 4 plate",
+  story:"Jessie's ID heist on the plate, a motorbike chase with Roche, then infiltrating the plate's underside with Biggs and Wedge.",
+  items:[
+    ["c4-side","gear","Explore every side branch on the plate catwalks","Chests and Shinra boxes sit off the main path while you're with Biggs and Wedge."],
+    ["c4-medals","gear","Save every Moogle Medal you find","You can't spend them until Chapter 8 (Moogle Emporium)."],
+  ],
+  boss:[["Roche","Block his sword combos, then punish after his charge. On the bike, slash when he pulls alongside."]],
+  tips:["Jessie's chapter has some of the best story beats. Talk to everyone."]
+},
+{ n:5, t:"Dogged Pursuit", where:"Sector 4 train tunnels",
+  story:"Sneak through the train tunnels toward Mako Reactor 5, dodging Shinra drones and the train schedule.",
+  items:[
+    ["c5-gates","gear","Check every emergency side gate in the tunnels","Most chests in this chapter are behind side gates off the main track."],
+    ["c5-metal","weapon","Metal Knuckles (Tifa)","Dropped by the Crab Warden boss. Great physical upgrade."],
+  ],
+  boss:[["Crab Warden","Machine, so it's weak to Lightning. Break the legs to stagger it, and dodge its laser sweeps."]],
+  tips:["Lightning shreds machines all game. Keep one Lightning materia equipped."]
+},
+{ n:6, t:"Light in the Abyss", where:"Sector 4 plate · Sun lamps",
+  story:"Use the crane arms to restore the sun lamps and work your way through the plate interior.",
+  callouts:[["warn","Big missables","This chapter hides three materia you can't come back for on this run: <b>Elemental</b>, <b>Chocobo &amp; Moogle</b> summon and <b>MP Up</b>. Explore every crane-arm path."]],
+  items:[
+    ["c6-elemental","materia","Elemental materia","Plate lower level, at the end of a platform after a bridge crossing. One of the best materia in the game."],
+    ["c6-chocomog","materia","Chocobo & Moogle summon","Optional side path. Your first summon."],
+    ["c6-mpup","materia","MP Up materia","On a lowered bridge. Give it to Aerith later."],
+    ["c6-medal","gear","Moogle Medal","Chest near Sun Lamp 3."],
+    ["c6-armlet","gear","Mesmeric Armlet","Chest in the plate interior."],
+    ["c6-lmg","weapon","Light Machine Gun (Barret)","Biggs gives it to you during the story."],
+  ],
+  boss:[],
+  tips:["Elemental + Lightning on the <b>weapon</b> = lightning attacks. Elemental + an element on <b>armor</b> = resistance to that element."]
+},
+{ n:7, t:"A Trap Is Sprung", where:"Mako Reactor 5",
+  story:"The second reactor run. It's a trap, and the Airbuster is waiting.",
+  callouts:[["info","Keycards","Grab every keycard in the reactor. You can spend them at terminals to weaken the Airbuster before the fight. Use all of them."]],
+  items:[
+    ["c7-sonic","weapon","Sonic Strikers (Tifa)","Chest in the hallway between the B6 and B5 Airbuster labs."],
+    ["c7-keys","gear","Use all Airbuster keycards on the terminals","Each one disables an Airbuster weapon or weakens it."],
+  ],
+  boss:[["Airbuster","Lightning. Split up so it can't hit everyone at once. Hit its back to stagger it."]],
+  tips:[]
+},
+{ n:8, t:"Budding Bodyguard", where:"Sector 5 Slums · Aerith's house",
+  story:"Aerith joins. You're her bodyguard on the way home. The second side-quest hub, with the Moogle Emporium and new Chadley reports.",
+  callouts:[
+    ["warn","Wall Market dresses","How many Chapter 8 side quests you finish decides Aerith's Wall Market dress in Chapter 9. Do all six for the best one."],
+    ["warn","Hub closes","Side quests here lock once you leave with Aerith for Sector 6."],
+  ],
+  items:[
+    ["c8-moogle","quest","The Mysterious Moogle Merchant","Opens the Moogle Emporium, where you spend Moogle Medals."],
+    ["c8-kids","quest","Kids on Patrol","Reward: Nail Bat (Cloud)."],
+    ["c8-rampage","quest","Weapons on a Rampage","Reward: Protective Boots. Must be done before Paying Respects."],
+    ["c8-respects","quest","Paying Respects","Reward: Studded Bracer."],
+    ["c8-hero","quest","A Verified Hero","Whack-a-Box: 10,000 pts = Elixir, 20,000 = Crescent Moon Charm, 30,000 = Spectral Cogwheel."],
+    ["c8-angel","quest","The Angel of the Slums","Reward: 2,000 gil."],
+    ["c8-flowers","quest","Discovery: The Language of Flowers","Unlocks once all Chapter 8 quests are done."],
+    ["c8-silver","weapon","Silver Staff (Aerith)","Moogle Emporium, 2 Moogle Medals."],
+    ["c8-m-cloud","script","Art of Swordplay Vol. I (Cloud)","Moogle Emporium, 5 Moogle Medals."],
+    ["c8-m-tifa","script","Way of the Fist Vol. I (Tifa)","Moogle Emporium."],
+    ["c8-m-barret","script","Sharpshooter's Companion Vol. I (Barret)","Moogle Emporium."],
+    ["c8-m-aerith","script","Telluric Scriptures Vol. I (Aerith)","Moogle Emporium."],
+    ["c8-d-costa","disc","Costa del Sol","Sector 5 Slums materia shop."],
+    ["c8-d-saucer","disc","Gold Saucer","Moogle Emporium."],
+    ["c8-d-cait","disc","Cait Sith's Theme","Vending machine near the Sector 5 train station."],
+    ["c8-d-tango","disc","Tango of Tears","Jukebox in the Sector 5 Undercity community center."],
+  ],
+  boss:[["Reno","Fast. Block his dashes, then hit him while he recovers. Destroy the electro-mines. Aerith's spells stagger him."]],
+  tips:["Spend medals in this order: Manuscripts (+10 SP each), then Silver Staff. Hold some back for Steel Pincers in Chapter 14 (7 medals).","The A Verified Hero high score takes practice. Aim for the boxes that give bigger points."]
+},
+{ n:9, t:"The Town That Never Sleeps", where:"Wall Market",
+  story:"Wall Market and Don Corneo's 'audition'. Win over a sponsor (Sam, Madam M or Andrea), dress up, and storm the mansion.",
+  callouts:[
+    ["warn","Dresses","Tifa's and Cloud's dresses depend on the side quests you complete here. Do every one for the best outfits."],
+    ["warn","Magnify","The <b>Magnify</b> materia is in the Collapsed Expressway (shipping-container puzzle), inside a tunnel by the wooden walkway. Don't leave without it."],
+  ],
+  items:[
+    ["c9-thighs","quest","Burning Thighs (squats)","Gym squat contest. Trainee: 3 Mega-Potions. Amateur: Luck Up. Pro: <b>Champion Belt</b>."],
+    ["c9-party","quest","The Party Never Stops","Do it, because it pays off in Chapter 14 (Johnny's wallet)."],
+    ["c9-thief","quest","The Price of Thievery","Track down the thieves."],
+    ["c9-other","quest","On the Other Side","Reward: Warding materia."],
+    ["c9-arcane","quest","A Dynamite Body / Shears' Counterattack","Whichever one your route gives you. Reward: Arcane Scepter (Aerith)."],
+    ["c9-hardedge","weapon","Hardedge (Cloud)","Wall Market weapon shop. Cloud's best pure-damage sword for a while. Learn Infinity's End."],
+    ["c9-magnify","materia","Magnify materia","Collapsed Expressway. Pair it with Healing on Aerith."],
+    ["c9-c-cloudthugs","colo","Cloud vs. Shinra Thugs","Reward: Art of Swordplay Vol. II."],
+    ["c9-c-aerththugs","colo","Aerith vs. Shinra Thugs","Reward: Telluric Scriptures Vol. II."],
+    ["c9-c-cloudwild","colo","Cloud vs. Wild Animals","Reward: Legacy: Ascension (Cloud's level 2 limit). Huge."],
+    ["c9-d-honeybee","disc","Honeybee Inn","Wall Market shop."],
+    ["c9-d-blues","disc","Midgar Blues","Singer at the Wall Market bar."],
+    ["c9-d-pizza","disc","Under the Rotting Pizza","Jukebox in the alley south of the inn."],
+    ["c9-d-battles","disc","Let the Battles Begin","Guides list it anywhere from Chapter 9 to 11. Check Wall Market and Corneo Colosseum shops."],
+  ],
+  boss:[["Hell House","It switches between elemental modes. Assess it, then cast whatever it's weak to in each mode. When it opens up, stagger it with Aerith's magic."]],
+  tips:["Do the Colosseum challenges before you head into the mansion. Ascension alone is worth it."]
+},
+{ n:10, t:"Rough Waters", where:"Sewers under Wall Market",
+  story:"Dumped into the sewers by Corneo. Fight Abzu, then work the water-level sluice puzzles to escape.",
+  items:[
+    ["c10-feather","weapon","Feathered Gloves (Tifa)","Chest in the Sector 6 sewers. If you miss it, you get a second chance in Chapter 14."],
+    ["c10-side","gear","Drain every sluice and check the newly opened rooms","The water puzzles open rooms with chests."],
+  ],
+  boss:[["Abzu","Weak to Fire. Stay behind it, and block when it jumps. Its shoat adds come back in Chapter 14."]],
+  tips:[]
+},
+{ n:11, t:"Haunted", where:"Train Graveyard",
+  story:"Ghosts, ghouls and Tifa/Aerith banter in the train graveyard on the way back to Sector 7.",
+  callouts:[["warn","Steal","Equip <b>Steal</b> (Chadley report) before the boss. You can steal a staff for Aerith from Eligor, and it's only available here."]],
+  items:[
+    ["c11-mythril","weapon","Mythril Rod (Aerith)","Chest in an abandoned train carriage. Big magic boost."],
+    ["c11-steal","miss","Steal Aerith's staff from Eligor","Bring Steal materia. Keep using it until it works."],
+  ],
+  boss:[["Eligor","Weak to Lightning. Destroy the wheels on its chariot, then knock it down and burst it with ATB."]],
+  tips:["Ghosts are weak to Fire.","The Ghoul enemies resist physical attacks. Use magic."]
+},
+{ n:12, t:"Fight for Survival", where:"Sector 7 Pillar",
+  story:"Defend the Sector 7 support pillar from Shinra while climbing to the top.",
+  items:[
+    ["c12-landings","gear","Check each landing on the pillar climb","Chests are tucked around the landings."],
+  ],
+  boss:[["Reno & Rude","Split them: control Barret and shoot Reno, keep Rude busy with Cloud. Rude hits hard, so block his charged punches."]],
+  tips:["Drones fly. Barret's ranged attacks and Lightning materia are your friends."]
+},
+{ n:13, t:"A Broken World", where:"Sector 7 aftermath · Sector 5 underground",
+  story:"The aftermath. Gather the survivors and dig into Shinra's underground facility.",
+  items:[
+    ["c13-claws","weapon","Mythril Claws (Tifa)","Reward for beating the Failed Experiment boss. Good magic-leaning weapon."],
+    ["c13-bertha","weapon","Big Bertha (Barret)","Buy from the Sector 7 slums vendor in this chapter."],
+    ["c13-magnify","materia","Magnify (if missed in Chapter 9)","Some guides say you can still reach it in this chapter."],
+  ],
+  boss:[["Failed Experiment","Watch its stance changes. Let Barret tank the ranged phases and burst it when it staggers."]],
+  tips:[]
+},
+{ n:14, t:"In Search of Hope", where:"Sector 5 & 6 · Wall Market (revisit)",
+  story:"The biggest open chapter. Every side quest, Colosseum match and shop is here. Take your time.",
+  callouts:[
+    ["warn","Big payoff","Finish all <b>9</b> side quests to get a second <b>Elemental</b> materia."],
+    ["warn","Last hub","After this chapter the game turns linear. Finish everything here first, and keep <b>10,000 gil</b> for Chapter 16."],
+  ],
+  items:[
+    ["c14-children","quest","Search for the Missing Children","Reward: <b>Time</b> materia (Haste)."],
+    ["c14-chocobo","quest","Chocobo Search","Reward: Sam's Lifetime Pass (free chocobo rides)."],
+    ["c14-goons","quest","Malicious Goons","Reward: Elixir."],
+    ["c14-menace","quest","Subterranean Menace","Reward: Wrecking Ball (Barret)."],
+    ["c14-medicine","quest","Secret Medicine","Requires Subterranean Menace. Behemoth Type 0. Reward: Telluric Scriptures Vol. III."],
+    ["c14-heart","quest","Wavering Heart","Reward: Way of the Fist Vol. III (Tifa)."],
+    ["c14-tomboy","quest","Tomboy Bandit","Gets you the Corneo Vault Key + Johnny's Wallet."],
+    ["c14-stash","quest","Corneo's Secret Stash","Moogle Medals + Diamond Tiara. Final reward: Art of Swordplay Vol. III."],
+    ["c14-music","quest","The Power of Music","Bring the right jukebox discs. Reward: Sharpshooter's Companion Vol. III."],
+    ["c14-elemental","materia","Elemental materia #2","Complete all 9 side quests."],
+    ["c14-saber","weapon","Mythril Saber (Cloud)","Wall Market weapon shop. Cloud's magic sword."],
+    ["c14-pincers","weapon","Steel Pincers (Barret)","Moogle Emporium, 7 Moogle Medals."],
+    ["c14-feather","weapon","Feathered Gloves (Tifa)","Second chance in the sewers if you missed it in Chapter 10."],
+    ["c14-c-tifathugs","colo","Tifa vs. Shinra Thugs","Reward: Way of the Fist Vol. II."],
+    ["c14-c-barthugs","colo","Barret vs. Shinra Thugs","Reward: Sharpshooter's Companion Vol. II."],
+    ["c14-c-tifawild","colo","Tifa vs. Wild Animals","Reward: Dolphin Flurry (Tifa's level 2 limit)."],
+    ["c14-c-barwild","colo","Barret vs. Wild Animals","Reward: Catastrophe (Barret's level 2 limit)."],
+    ["c14-c-team","colo","Team matches (Slum Outlaws, Team Payback, etc.)","Rewards include Clarity Pendant, Tarot Cards and Moogle's Amulet."],
+    ["c14-d-turks","disc","The Turks' Theme","A woman on the road from Sector 5 toward Sector 6, near a small pool of water."],
+    ["c14-d-standup","disc","Stand Up","NPC in the alley beside the Honeybee Inn."],
+    ["c14-d-fight","disc","Fight On!","Corneo Colosseum souvenir shop."],
+    ["c14-d-night","disc","Good Night, Until Tomorrow","Man at the front desk of the inn at the Wall Market entrance."],
+    ["c14-d-wutai","disc","Wutai","Man near the construction zone (Wall Market / Sector 6 slums)."],
+  ],
+  boss:[["Behemoth Type 0 (Secret Medicine)","Break its horn. Lightning and Ice work well. Steadfast Block helps against its stomps."]],
+  tips:["Do Chocobo Search early. Free rides make the rest of the chapter faster.","Haste (Time) on Cloud or Tifa doubles your ATB flow. It's a game changer."]
+},
+{ n:15, t:"The Price of Freedom", where:"Sector 7 wreckage · climb to the plate",
+  story:"Climb the wreckage of Sector 7 toward the plate and Shinra HQ.",
+  items:[
+    ["c15-side","gear","Check every side ledge on the climb","There are a few hidden chests on the way up."],
+  ],
+  boss:[],
+  tips:["Gear up before you go in: Elemental + Lightning on Cloud's weapon makes the robots in the next two chapters easy."]
+},
+{ n:16, t:"The Belly of the Beast", where:"Shinra HQ",
+  story:"Infiltrate Shinra HQ: the lobby, the stairs (or the elevator), Mayor Domino, and the upper floors.",
+  callouts:[
+    ["warn","EKG Cannon","After you talk to the Mayor, talk to <b>Hart</b> outside the office. He sells the <b>EKG Cannon</b> for <b>10,000 gil</b>, and it's a one-time offer. Have the gil ready."],
+    ["info","Combat Simulator","The Shinra Combat Simulator opens now and is only available in Chapters 16–17. It's your last chance on this run for those manuscripts."],
+  ],
+  items:[
+    ["c16-purple","weapon","Purple Pain (Tifa)","Shinra HQ lobby, in a chest reached by the monkey bars during Tifa's solo section. Tifa's best physical weapon."],
+    ["c16-ekg","weapon","EKG Cannon (Barret)","10,000 gil from Hart. Lifesaver makes Barret a real tank."],
+    ["c16-sim","colo","Shinra Combat Simulator (Normal challenges)","Clear everything available. Some rewards are Hard Mode only, so leave those for later."],
+  ],
+  boss:[],
+  tips:["The stair climb is long, but there's nothing extra to find on it. The elevator route has the fights."]
+},
+{ n:17, t:"Deliverance from Chaos", where:"Hojo's lab · Drum",
+  story:"Red XIII, the specimen labs and Jenova, then Rufus on the helipad and the Arsenal.",
+  items:[
+    ["c17-twin","weapon","Twin Stinger (Cloud)","After Red XIII helps you past the second set of test pods, clear the 3-wave room. It's in a purple chest to the left of the metal stairs."],
+    ["c17-chadley","quest","Finish every Battle Intel report you can","Chadley's last stop on this run. Summon VR fights: Shiva, Fat Chocobo, Leviathan, Bahamut."],
+    ["c17-sim","colo","Combat Simulator: everything Normal allows","Last chance until Chapter Select."],
+  ],
+  boss:[
+    ["Jenova Dreamweaver","Stay at range when its tentacles glow. Fire works well."],
+    ["Rufus (Cloud solo)","Block, and wait until he reloads. Attack in that window, and finish off Darkstar when it appears."],
+    ["Arsenal","Lightning, and fight at range when it charges its cannon. Bring Barret and use Lifesaver."],
+  ],
+  tips:["Equip Steadfast Block + HP Up on whoever you're controlling."]
+},
+{ n:18, t:"Destiny's Crossroads", where:"Midgar Expressway · Edge of Creation",
+  story:"The motorbike escape, the Motor Ball, the Whispers and Sephiroth.",
+  items:[
+    ["c18-done","gear","Finish the game: unlocks Chapter Select + Hard Mode","Anything you missed can be picked up on a replay of that chapter."],
+  ],
+  boss:[
+    ["Motor Ball","Hit the wheels on the bike."],
+    ["Whisper Harbinger","Multi-phase. Focus each Whisper's weakness and keep Aerith alive."],
+    ["Sephiroth","Watch for Octaslash. Block it, then punish. In his last phase, save your limits for when he's open."],
+  ],
+  tips:["Enter fully stocked with Phoenix Downs and Ethers."]
+},
+];
+
+const YUFFIE = [
+{ n:1, t:"Wutai's Finest", where:"Sector 7 Slums · Avalanche HQ",
+  story:"Yuffie and Sonon infiltrate Midgar to steal the Ultimate Materia, working with Avalanche HQ.",
+  callouts:[["info","When to play","The episode is on the Intergrade main menu. Story-wise it fits best after you finish Chapter 18."]],
+  items:[
+    ["y1-condor","quest","Fort Condor: talk to Polk","Unlocks the board game. Do the tutorial, then beat every opponent."],
+    ["y1-condor-all","quest","Beat all Fort Condor opponents","Buy cards and boards with Condor Coins. Some opponents are only around for a short time."],
+    ["y1-flyers","quest","Happy Turtle flyers","Talk to Old Snapper (left of the Clinic) for the List of Flyer Clues, then find them all."],
+    ["y1-card-riot","gear","Riot Trooper Barracks card","Chest in the southeast corner of the Residential Area, near a Happy Turtle poster."],
+    ["y1-card-mono","gear","Monodrive (Ranged) card","Talagger Factory, under the Stamp graffiti."],
+    ["y1-chadley","quest","Chadley's VR battles","He's here too, with summon fights."],
+  ],
+  boss:[],
+  tips:["Fort Condor: put your ranged units behind tanks, and protect your base before you push."]
+},
+{ n:2, t:"Covert Ops", where:"Shinra Advanced Weaponry Division",
+  story:"Infiltrate Shinra to get the Ultimate Materia. Face Scarlet's Crimson Mare and Nero.",
+  items:[
+    ["y2-ribbon","gear","Ribbon (accessory)","Dead end on the east side of an early floor. Blocks status ailments, and it's excellent."],
+    ["y2-volant","gear","Volant Armlet (armor)","Up the short stairs to the left on an early floor."],
+    ["y2-condor","miss","Fort Condor: finish what's left","The remaining Fort Condor matches can only be played early in Chapter 2."],
+  ],
+  boss:[
+    ["Scarlet & Crimson Mare","The Soldier Operators are weak to Fire. Use Yuffie's ranged throw on the Monodrives."],
+    ["Nero","He casts Haste mid-fight and hits hard. Move away from the arm that's firing to dodge his cannon laser."],
+  ],
+  tips:["Boomerang + Elemental/Lightning, Magic Up, MP Up, Fire and First Strike is a strong Yuffie setup."]
+},
+];
+
+const BUILDS = [
+{ who:"Cloud", role:"Striker / stagger finisher",
+  stages:[
+    ["Ch 2–8","Buster Sword → Iron Blade","Elemental+Lightning (Ch6+), ATB Boost, Healing, First Strike, Assess","Power Wristguards / Survival Set item"],
+    ["Ch 9–14","Hardedge (Infinity's End)","Elemental+boss weakness, ATB Boost, Steadfast Block, HP Up, Deadly Dodge","Champion Belt (Burning Thighs Pro)"],
+    ["Ch 15–18","Twin Stinger (all-round) or Mythril Saber (magic)","Elemental+Lightning, Time (Haste), HP Up, Skill Master, First Strike","Champion Belt"],
+  ],
+  notes:["Learn every weapon's ability to 100% proficiency. Once learned it works on any weapon: Triple Slash, Infinity's End, Blade Burst, Counterstance, Disorder.","In Punisher Mode, holding block counters melee attacks. Use Infinity's End as your stagger finisher."]
+},
+{ who:"Tifa", role:"Stagger damage multiplier",
+  stages:[
+    ["Ch 3–8","Metal Knuckles → Sonic Strikers","ATB Boost, First Strike, Lightning, Healing","Champion Belt or strength accessory"],
+    ["Ch 9–14","Feathered Gloves / Mythril Claws","ATB Boost, Time (Haste), HP Up, Steadfast Block, Ice","Clarity Pendant / Champion Belt"],
+    ["Ch 15–18","Purple Pain (best physical)","ATB Boost, Time, HP Up, First Strike, Chakra","Champion Belt"],
+  ],
+  notes:["Combo: once an enemy is staggered, use Unbridled Strength twice, then spend ATB on her abilities. This pushes the stagger damage bonus way up.","Tifa + Haste is the strongest damage setup on Normal."]
+},
+{ who:"Barret", role:"Tank / ranged",
+  stages:[
+    ["Ch 2–8","Gatling Gun → Light Machine Gun","Lightning (drones), Healing, Steadfast Block, HP Up","Survival Set item / Iron Bangle"],
+    ["Ch 12–14","Big Bertha / Steel Pincers / Wrecking Ball","Provoke, HP Up ×2, Steadfast Block, Chakra, Barrier","Tarot Cards"],
+    ["Ch 16–18","EKG Cannon (Lifesaver)","Provoke, HP Up ×2, Barrier+Magnify, Steadfast Block","Tarot Cards / HP accessory"],
+  ],
+  notes:["Lifesaver (EKG Cannon) redirects damage to Barret. With Provoke and HP Up, he takes the hits so Aerith keeps casting.","Maximum Fury (Light Machine Gun) is his best ranged damage."]
+},
+{ who:"Aerith", role:"Caster / healer",
+  stages:[
+    ["Ch 8–9","Guard Stick → Silver Staff","Healing+Magnify, MP Up, Fire, Ice","Revival Earrings / Earrings"],
+    ["Ch 9–14","Arcane Scepter → Mythril Rod","Healing+Magnify, MP Up ×2, Magic Up, Time, Fire, Lightning","Moogle's Amulet (MP)"],
+    ["Ch 15–18","Mythril Rod / the staff stolen in Ch 11","Healing+Magnify, Time, MP Up, Magic Up, Elemental (armor) vs boss","Moogle's Amulet / Circlet"],
+  ],
+  notes:["Cast from inside Arcane Ward: every spell fires twice.","Magnify+Healing is the backbone of your party. Never unequip it."]
+},
+];
+
+const MATERIA_PRIORITY = [
+  ["Elemental","Ch 6 (lower plate) + Ch 14 (all 9 quests). Weapon = element damage; armor = resistance."],
+  ["Magnify","Ch 9 Collapsed Expressway. Pair with Healing or Barrier."],
+  ["Time (Haste)","Ch 14 Missing Children. Huge for Tifa and Cloud."],
+  ["ATB Boost","Chadley report. Start fights with a full ATB bar."],
+  ["First Strike","Chadley report. Start every fight with ATB."],
+  ["Steal","Chadley report. Needed for Eligor in Ch 11."],
+  ["Steadfast Block","Chadley report. Blocking builds more ATB."],
+  ["Provoke","Chadley report. Makes enemies target Barret."],
+  ["HP/MP Absorption","Late Chadley reports. Link with attack materia."],
+  ["Enemy Skill","Chadley report. Equip it and get hit by enemy skills to learn them."],
+];
+
+const TIPS = [
+{ h:"Combat fundamentals", items:[
+  ["Assess everything","Assess shows weaknesses and how to pressure an enemy, and it counts toward Chadley's reports. Keep it equipped on one character all game."],
+  ["Pressure → Stagger","When an enemy is <i>Pressured</i>, its stagger bar fills much faster. Focused Thrust, Focused Shot and Tifa's Unbridled Strength all fill it."],
+  ["Swap characters a lot","The AI builds ATB slowly. Switch to whoever is about to fill a bar, spend it, then switch back."],
+  ["Block, don't dodge","Blocking cuts damage and builds ATB. Dodging doesn't, so save it for attacks you can't block (red/unblockable)."],
+  ["Prayer & Chakra","Limit/ATB-free healing. Prayer heals the whole party for 1 ATB."],
+  ["Summons","Only big fights fill the summon gauge. Summon early so it lasts longer."],
+]},
+{ h:"Progression & gear", items:[
+  ["Slots over stats","Pick armor with the most (and linked) materia slots. Extra slots beat small stat gains."],
+  ["Manuscripts = +10 SP","Each one gives that character more SP for weapon upgrades. Pick upgrade cores along the paths that boost your build (ATB, magic or attack)."],
+  ["Learn all weapon abilities","Once learned at 100% proficiency, an ability stays usable on every weapon."],
+  ["Save 10,000 gil by Chapter 16","For the one-time EKG Cannon from Hart."],
+  ["Moogle Medals","Hoard them until Chapter 8. Buy manuscripts first, then Silver Staff, then save 7 for Steel Pincers in Chapter 14."],
+]},
+{ h:"Don't-miss list (this run)", items:[
+  ["Ch 3","All 6 side quests before you sleep."],
+  ["Ch 6","Elemental, Chocobo & Moogle and MP Up materia."],
+  ["Ch 7","Sonic Strikers chest; use every Airbuster keycard."],
+  ["Ch 8","All 6 side quests (Aerith's dress), plus Moogle Emporium manuscripts."],
+  ["Ch 9","Magnify, Champion Belt (squats Pro), Colosseum (Ascension)."],
+  ["Ch 11","Mythril Rod chest; steal from Eligor."],
+  ["Ch 14","All 9 side quests (Elemental #2), Colosseum, Steel Pincers, Mythril Saber."],
+  ["Ch 16","Purple Pain; EKG Cannon (10k gil)."],
+  ["Ch 17","Twin Stinger; Chadley + Combat Simulator."],
+]},
+{ h:"Minigames", items:[
+  ["Squats (Ch 9)","Match the button rhythm and don't rush. Speed comes from not making mistakes."],
+  ["Whack-a-Box (Ch 8)","Chain boxes without stopping. Hit the big crates with a single heavy attack."],
+  ["Darts","Seventh Heaven. Aim for the inner ring and keep the sticks steady."],
+  ["Music discs","31 in total. Play them on any jukebox. Some side quests need them."],
+]},
+];
+
+const FILTERS = ["all","quest","miss","materia","weapon","script","disc","colo","gear"];
+
+// ---------- state ----------
+const KEY = "ff7r-guide-v1";
+let state = load() || { got:{}, cur:2, open:{2:true}, tab:"walk", filter:"all", hideGot:false, theme:null };
+function load(){ try{ const s = localStorage.getItem(KEY); return s ? JSON.parse(s) : null; }catch(e){ return null; } }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+
+const $ = s => document.querySelector(s);
+
+
+function allItems(){ return [...CHAPTERS.map(c => c.items.map(i => ({i, c, y:false}))), ...YUFFIE.map(c => c.items.map(i => ({i, c, y:true})))].flat(); }
+
+function itemHTML([id, tag, text, note]){
+  const got = !!state.got[id];
+  return `<li class="item${got ? " got" : ""}"><input type="checkbox" data-id="${id}" ${got ? "checked" : ""} aria-label="${text.replace(/<[^>]+>/g,"")}">
+    <div class="itxt"><span class="tag t-${tag}">${TAGS[tag]}</span>${text}</div>${note ? `<div class="inote">${note}</div>` : ""}</li>`;
+}
+
+function chapterHTML(c, y){
+  const key = (y ? "y" : "") + c.n;
+  const total = c.items.length, got = c.items.filter(i => state.got[i[0]]).length;
+  const isCur = !y && state.cur === c.n;
+  const done = total > 0 && got === total;
+  return `<details class="ch${done ? " done" : ""}" data-key="${key}" ${state.open[key] ? "open" : ""}>
+    <summary><span class="chno">${c.n}</span><span class="chtitle">${c.t}${isCur ? '<span class="here">You are here</span>' : ""}</span>
+      <span class="chmeta">${c.where}</span><span class="chcount num">${got}/${total}</span></summary>
+    <div class="chbody">
+      <p class="story">${c.story}</p>
+      ${(c.callouts || []).map(([k, h, b]) => `<div class="callout ${k === "info" ? "info" : ""}"><b>${h}:</b> ${b}</div>`).join("")}
+      ${total ? `<h3>Loot & checklist</h3><ul class="list">${c.items.map(itemHTML).join("")}</ul>` : ""}
+      ${c.boss.length ? `<h3>Bosses</h3>${c.boss.map(([n, t]) => `<div class="boss"><b>${n}</b> — ${t}</div>`).join("")}` : ""}
+      ${c.tips.length ? `<h3>Tips</h3><ul class="tips">${c.tips.map(t => `<li>${t}</li>`).join("")}</ul>` : ""}
+    </div></details>`;
+}
+
+function renderWalk(){
+  $("#walk").innerHTML = CHAPTERS.map(c => chapterHTML(c, false)).join("");
+}
+function renderYuffie(){
+  $("#yuffie").innerHTML = `<div class="panel"><h2>INTERmission: Yuffie</h2><p class="hint">Two-chapter episode included with Intergrade. Yuffie throws her shuriken for ranged attacks, and casting an element changes her Ninjutsu element. Use Synergy with Sonon for linked attacks.</p></div>`
+    + YUFFIE.map(c => chapterHTML(c, true)).join("");
+}
+function renderHunt(){
+  $("#filters").innerHTML = FILTERS.map(f => `<button class="opt" data-f="${f}" aria-pressed="${state.filter === f}">${f === "all" ? "All" : TAGS[f]}</button>`).join("");
+  $("#hideGot").checked = state.hideGot;
+  const q = $("#q").value.trim().toLowerCase();
+  const groups = [...CHAPTERS.map(c => [c, false]), ...YUFFIE.map(c => [c, true])].map(([c, y]) => {
+    const rows = c.items.filter(([id, tag, text, note]) =>
+      (state.filter === "all" || tag === state.filter) &&
+      (!state.hideGot || !state.got[id]) &&
+      (!q || (text + " " + (note || "")).toLowerCase().includes(q)));
+    return rows.length ? `<div class="panel"><h3>${y ? "Yuffie Ch " : "Ch "}${c.n} · ${c.t}</h3><ul class="list">${rows.map(itemHTML).join("")}</ul></div>` : "";
+  }).join("");
+  // bosses are searchable too
+  const bossHits = q ? [...CHAPTERS, ...YUFFIE].flatMap(c => c.boss.filter(([n, t]) => (n + " " + t).toLowerCase().includes(q)).map(([n, t]) => `<div class="boss"><b>${n}</b> (Ch ${c.n}): ${t}</div>`)).join("") : "";
+  $("#huntList").innerHTML = (groups + (bossHits ? `<div class="panel"><h3>Bosses</h3>${bossHits}</div>` : "")) || `<div class="empty">Nothing left here 🎉</div>`;
+}
+function renderBuilds(){
+  $("#builds").innerHTML = `<div class="panel"><h2>Materia to prioritize</h2><table><tbody>${MATERIA_PRIORITY.map(([m, w]) => `<tr><th style="white-space:normal;text-transform:none;font-size:14px;color:var(--ink)">${m}</th><td>${w}</td></tr>`).join("")}</tbody></table>
+    <p class="hint">Purple tags in a build are linked pairs: put them in two linked slots.</p></div>`
+  + BUILDS.map(b => `<section class="panel char"><h2>${b.who} <span class="role">${b.role}</span></h2>
+    <table><thead><tr><th>When</th><th>Weapon, materia &amp; accessory</th></tr></thead><tbody>
+    ${b.stages.map(([w, wp, m, acc]) => `<tr><td class="num" style="white-space:nowrap">${w}</td><td><b>${wp}</b><div class="mat" style="margin-top:6px">${m.split(", ").map(x => `<span class="${x.includes("+") ? "pair" : ""}">${x}</span>`).join("")}</div><div class="hint" style="margin-top:6px">Accessory: ${acc}</div></td></tr>`).join("")}
+    </tbody></table>
+    <ul class="tips">${b.notes.map(n => `<li>${n}</li>`).join("")}</ul></section>`).join("");
+}
+function renderTips(){
+  $("#tips").innerHTML = TIPS.map(g => `<section class="panel"><h2>${g.h}</h2><div class="tipgrp">${g.items.map(([h, t]) => `<div class="tip"><b>${h}</b>${t}</div>`).join("")}</div></section>`).join("")
+    + `<section class="panel"><h2>Hard Mode (later)</h2><p class="hint">Unlocks after Chapter 18. Saved for your next run: no items, MP only refills at benches, and it has the higher-volume manuscripts and the top Combat Simulator rewards (including Götterdämmerung).</p></section>`;
+}
+function renderTotals(){
+  const all = allItems(), got = all.filter(x => state.got[x.i[0]]).length;
+  $("#totNum").textContent = `${got} / ${all.length}`;
+  $("#totBar").style.width = (all.length ? got / all.length * 100 : 0) + "%";
+}
+function renderCurSel(){
+  $("#curCh").innerHTML = CHAPTERS.map(c => `<option value="${c.n}" ${state.cur === c.n ? "selected" : ""}>Ch ${c.n}</option>`).join("");
+}
+function setTab(t){
+  state.tab = t; save();
+  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === t));
+  document.querySelectorAll(".view").forEach(v => v.hidden = v.id !== t);
+  if (t === "hunt") renderHunt();
+  if (scrollY > 200) window.scrollTo({ top:0 });
+}
+function renderAll(){ renderCurSel(); renderWalk(); renderYuffie(); renderBuilds(); renderTips(); renderHunt(); renderTotals(); setTab(state.tab); }
+
+function applyTheme(){ if (state.theme) document.documentElement.dataset.theme = state.theme; else delete document.documentElement.dataset.theme; }
+
+// ---------- events ----------
+document.addEventListener("change", e => {
+  const id = e.target.dataset && e.target.dataset.id;
+  if (id){
+    if (e.target.checked) state.got[id] = 1; else delete state.got[id];
+    save();
+    // update every copy of this item, chapter counts, and totals without collapsing what's open
+    document.querySelectorAll(`input[data-id="${id}"]`).forEach(i => { i.checked = e.target.checked; i.closest("li").classList.toggle("got", e.target.checked); });
+    document.querySelectorAll("details.ch").forEach(d => {
+      const ins = d.querySelectorAll("input[data-id]"), n = [...ins].filter(i => i.checked).length;
+      d.querySelector(".chcount").textContent = `${n}/${ins.length}`;
+      d.classList.toggle("done", ins.length > 0 && n === ins.length);
+    });
+    renderTotals();
+  }
+});
+document.addEventListener("toggle", e => {
+  const d = e.target; if (!d.matches || !d.matches("details.ch")) return;
+  state.open[d.dataset.key] = d.open; save();
+}, true);
+document.querySelectorAll(".tab").forEach(b => b.addEventListener("click", () => setTab(b.dataset.tab)));
+$("#curCh").addEventListener("change", e => {
+  state.cur = +e.target.value; state.open[state.cur] = true; save();
+  renderWalk(); setTab("walk");
+  const el = document.querySelector(`details.ch[data-key="${state.cur}"]`); if (el) el.scrollIntoView({ behavior:"smooth", block:"start" });
+});
+$("#filters").addEventListener("click", e => { const f = e.target.dataset.f; if (f){ state.filter = f; save(); renderHunt(); } });
+$("#q").addEventListener("input", renderHunt);
+$("#hideGot").addEventListener("change", e => { state.hideGot = e.target.checked; save(); renderHunt(); });
+$("#themeBtn").addEventListener("click", () => {
+  const dark = state.theme ? state.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  state.theme = dark ? "light" : "dark"; save(); applyTheme();
+});
+$("#resetBtn").addEventListener("click", () => {
+  if (confirm("Clear every checkbox and start over?")){ state.got = {}; save(); renderAll(); }
+});
+
+applyTheme();
+renderAll();
+if ("serviceWorker" in navigator && window.isSecureContext && location.protocol.startsWith("http")) navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+</body>
+</html>
