@@ -219,11 +219,11 @@ const TAGS = { quest:"Side quest", disc:"Music disc", script:"Manuscript", weapo
 const CHAPTERS = [
 { n:1, t:"The Destruction of Mako Reactor 1", where:"Mako Reactor 1",
   story:"Cloud and Barret's bombing run with Avalanche. You finished this in the demo; your save carries over.",
-  callouts:[["info","Demo bonus","Carrying over a demo save unlocks the <b>Revival Earrings</b> and <b>Survival Set</b> in the full game. Check your Items/Equipment."]],
+  callouts:[["info","Demo bonus","Demo save data unlocks the <b>Revival Earrings</b> and <b>Survival Set</b>. Claim them from <b>Gift Box</b> on the title menu — they don't appear on their own."]],
   items:[
-    ["c1-bonus","gear","Demo bonus: Revival Earrings + Survival Set","Confirm they're in your inventory before Chapter 2."],
+    ["c1-bonus","gear","Demo bonus: Revival Earrings + Survival Set","Title menu → Gift Box. Claim before Chapter 2."],
   ],
-  boss:[["Scorpion Sentinel","Done ✔"]],
+  boss:[["Scorpion Sentinel","Done in the demo. If you replay it: weak to <b>Lightning</b>. Hide behind debris when it charges Tail Laser, and hit it hard when its barrier drops."]],
   tips:[]
 },
 { n:2, t:"Fateful Encounters", where:"Sector 8",
@@ -277,7 +277,7 @@ const CHAPTERS = [
     ["c5-metal","weapon","Metal Knuckles (Tifa)","Guaranteed drop from the Crab Warden. Learn Overpower on it."],
     ["c5-d-stamp","disc","Stamp","Former Rail Yard (Section E): after the two flamethrower turrets, open the side door off the corridor to a break room with a vending machine."],
   ],
-  boss:[["Crab Warden","Weak to Lightning. Cripple its legs to stagger it, then hit the exposed generator, which takes double physical damage."]],
+  boss:[["Queen Grashtrike","Weak to <b>Ice</b>. Carry Antidotes for its poison. When Royal Webbing binds someone, switch to another character and keep attacking. Save some MP: the Crab Warden comes later this chapter."],["Crab Warden","Weak to Lightning. Cripple its legs to stagger it, then hit the exposed generator, which takes double physical damage."]],
   tips:["Lightning shreds machines all game. Keep one Lightning materia equipped."]
 },
 { n:6, t:"Light the Way", where:"Sector 4 plate · Sun lamps",
@@ -292,7 +292,7 @@ const CHAPTERS = [
     ["c6-lmg","weapon","Light Machine Gun (Barret)","Automatic in this chapter. Learn <b>Lifesaver</b> on it, Barret's tanking ability."],
     ["c5-d-electric","disc","Electric de Chocobo","Plate ventilation area: take the small elevator west of the big cargo lift over to the fan side. Vending machine in the first room (not the one by the cargo lift)."],
   ],
-  boss:[["Queen Grashtrike","Put Elemental+Ice on Cloud's weapon and Lightning on Tifa and Barret. Use Punisher Mode, then Blizzard spells."]],
+  boss:[],
   tips:["Elemental + Lightning on the <b>weapon</b> = lightning attacks. Elemental + an element on <b>armor</b> = resistance to that element."]
 },
 { n:7, t:"A Trap Is Sprung", where:"Mako Reactor 5",
@@ -331,7 +331,7 @@ const CHAPTERS = [
     ["c8-d-cait","disc","Cait Sith's Theme","Vending machine at the Sector 5 Undercity station."],
     ["c8-d-tango","disc","Tango of Tears","Jukebox in the Sector 5 Undercity community center."],
   ],
-  boss:[["Reno","Magic does little to him. Block, and let Punisher Mode counter his melee attacks. Destroy the EM Mines fast (Triple Slash works) before they link up."]],
+  boss:[["Reno","Magic does little to him. Block, and let Punisher Mode counter his melee attacks. Destroy the EM Mines fast (Triple Slash works) before they link up."],["Rude","Right after Reno. Weak to <b>Wind</b> (Aero), resists Fire. Dodge his punches instead of blocking."]],
   tips:["Short on medals? Replay Whack-a-Box, which gives a medal every time, even with a score of 0.","Spend medals on manuscripts (+10 SP each) and the Silver Staff. Keep 7 for Steel Pincers in Chapter 14."]
 },
 { n:9, t:"The Town That Never Sleeps", where:"Wall Market",
@@ -360,7 +360,7 @@ const CHAPTERS = [
     ["c9-d-ltbbr","disc","Let the Battles Begin! (Remake)","Do the practice dance section perfectly."],
     ["c9-d-don","disc","Don of the Slums","Corneo's mansion basement: vending machine in the Forbidden Room, where Cloud, Aerith and Tifa regroup."],
   ],
-  boss:[["Hell House","Its barrier color shows its element: red = fire (use Ice), blue = ice (use Fire), green = wind (use Lightning), yellow = lightning. Bring all four elements split between Cloud and Aerith. Its 50% barrier eventually breaks on its own."]],
+  boss:[["Hell House","Its window color shows its current element. It absorbs that element, so hit it with the opposite: red (Fire) → Ice, white (Ice) → Fire, green (Wind) → Lightning, blue (Lightning) → Wind. Bring all four elements split between Cloud and Aerith. In God House mode only its front arms take damage."]],
   tips:["Do Cloud's Colosseum challenges before you head into the mansion. Ascension alone is worth it."]
 },
 { n:10, t:"Rough Waters", where:"Sewers under Wall Market",
@@ -383,7 +383,7 @@ const CHAPTERS = [
     ["c11-bladed","weapon","Bladed Staff (Aerith)","Steal it from Eligor. It's easier while he's staggered. Lustrous Shield."],
     ["c11-d-ltbb","disc","Let the Battles Begin!","Vending machine in the Train Graveyard."],
   ],
-  boss:[["Eligor","Weak to Ice, and Wind helps while he's flying. In the final phase, break his chariot's wheels."]],
+  boss:[["Ghoul","Weak to Fire. When it's solid (blue), use physical attacks. When it turns ghostly (red), it ignores physical hits: use magic, and Cure spells or Potions damage it. A Phoenix Down forces it back to solid form."],["Eligor","Weak to Ice, and Wind helps while he's flying. In the final phase, break his chariot's wheels."]],
   tips:[]
 },
 { n:12, t:"Fight for Survival", where:"Sector 7 Pillar",
@@ -391,7 +391,7 @@ const CHAPTERS = [
   items:[
     ["c12-landings","gear","Check each landing on the pillar climb","Chests are tucked around the landings."],
   ],
-  boss:[["Reno & Rude","Split them up. Rude is weak to Wind. Keep Reno busy with Punisher counters, and block Rude's charged punches."]],
+  boss:[["Reno & Rude","Split them up. Rude is weak to Wind. Keep Reno busy with Punisher counters, and dodge Rude's punches rather than blocking them."]],
   tips:["Drones fly. Barret's ranged attacks and Lightning materia are your friends."]
 },
 { n:13, t:"A Broken World", where:"Sector 6 Slums (Evergreen Park) · underground test site",
@@ -468,9 +468,9 @@ const CHAPTERS = [
     ["c16-sim","colo","Combat Simulator solo fights","Cloud: Cog Bangle. Barret: Supreme Bracer. Tifa: Rune Armlet."],
     ["c16-sim-team","colo","Combat Simulator team fights","High Flyers: Gil Up materia. Ragbag: EXP Up materia."],
     ["c16-chadley","quest","Finish every Battle Intel report you can","Summon VR fights: Shiva, Fat Chocobo, Leviathan, Bahamut."],
-    ["c16-d-scarlet","disc","Scarlet's Theme","Jukebox in the employee lounge."],
+    ["c16-d-scarlet","disc","Scarlet's Theme","Jukebox next to the Combat Simulator in the 63F lounge."],
   ],
-  boss:[["Specimen H0512","No elemental weakness. It resists Lightning and is immune to Poison and Slow, so skip Bio. Kill the H0512-OPT minions fast, break its claw to pressure it, and hit it with Braver or Omnistrike to free anyone it grabs. Stop works in the later phases. Steal a Timeworn Talisman."]],
+  boss:[["Specimen H0512","Guides split on Lightning (most say it has no weakness and slightly resists it; two say it's weak to it), so Assess it in the first few seconds. Immune to Poison and Slow, so skip Bio. Kill the H0512-OPT minions fast, break its claw to pressure it, and hit it with Braver or Omnistrike to free anyone it grabs. Stop works in the later phases. Steal a Timeworn Talisman."]],
   tips:["The stair climb is long, but there's nothing extra to find on it."]
 },
 { n:17, t:"Deliverance from Chaos", where:"Hojo's lab · Drum",
@@ -481,6 +481,7 @@ const CHAPTERS = [
     ["c17-twin","weapon","Twin Stinger (Cloud)","Drum Level 3, training area: right after the room with three waves of enemies, in a purple chest to the left of the metal stairs. Counterstance."],
   ],
   boss:[
+    ["Brain Pod","Weak to Lightning."],
     ["Swordipede","Its saw-blade body deflects physical hits, so use elemental spells."],
     ["Jenova Dreamweaver","No elemental weakness. Resists magic and Sleep, immune to Slow and Stop. Equip <b>Protective Boots</b> against its Stop. Go physical with Tifa and Cloud, and dodge when a tentacle lifts. Don't hit it while Rejection is up (it counters hard); wait it out or use Breach. Destroy the tentacles when they swarm in phase 2."],
     ["Rufus & Darkstar (Cloud solo)","Kill Darkstar first, because it heals Rufus. Lightning+Elemental on your armor absorbs his Thunderclap. Use Triple Slash while he reloads."],
@@ -588,6 +589,7 @@ const TIPS = [
   ["Swap characters a lot","The AI builds ATB slowly. Switch to whoever is about to fill a bar, spend it, then switch back."],
   ["Block, don't dodge","Blocking cuts damage and builds ATB. Dodging doesn't, so save it for attacks you can't block."],
   ["Summons","Only big fights fill the summon gauge. Summon early so it lasts longer."],
+  ["Switch 2: Streamlined Progression","Optional assist mode new to this version: full HP/MP, every hit deals 9,999, and max items. Great for a story replay, but it makes your first run trivial. Leave it off unless a fight is blocking you."],
 ]},
 { h:"Progression & gear", items:[
   ["Slots over stats","Pick armor with the most (and linked) materia slots. Extra slots beat small stat gains."],
