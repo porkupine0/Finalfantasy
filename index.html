@@ -120,6 +120,20 @@ dialog::backdrop{background:rgba(4,10,9,.55)}
 .dlg-foot{padding:12px 16px 16px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:12px}
 .primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .leave{margin-top:2px;align-self:flex-start}
+.next{border-color:var(--gold)}
+.next h2{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.next .chip{font:700 11px/1.6 "Figtree",sans-serif;text-transform:uppercase;letter-spacing:.06em;background:var(--gold-bg);color:var(--gold);border-radius:6px;padding:1px 7px}
+.nextfoot{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+ul.shop{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:15px}
+details.match{border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+details.match>summary{list-style:none;cursor:pointer;padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center}
+details.match>summary::-webkit-details-marker{display:none}
+details.match .mname{font-weight:700}
+details.match .mmeta{font-size:13px;color:var(--muted);grid-column:1}
+details.match .mdone{grid-row:1 / 3;grid-column:2;font-size:13px;font-weight:700;color:var(--muted)}
+details.match .mdone.ok{color:var(--accent)}
+details.match ol{margin:0;padding:0 12px 4px 34px;font-size:14px;display:flex;flex-direction:column;gap:3px}
+details.match .mtip{padding:6px 12px 12px;font-size:14px;color:var(--muted)}
 .tips{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:15px}
 .boss{border:1px dashed var(--line);border-radius:10px;padding:10px 12px;font-size:14.5px}
 .boss b{font-family:"Cinzel",serif}
@@ -198,6 +212,8 @@ footer{font-size:13px;color:var(--muted);text-align:center}
     </div>
     <div class="bar"><i id="totBar"></i></div>
   </section>
+
+  <section class="panel next" id="nextUp" aria-label="Next up"></section>
 
   <nav class="tabs" role="tablist">
     <button class="tab" role="tab" data-tab="walk">Chapters</button>
@@ -286,6 +302,7 @@ const CHAPTERS = [
   ],
   boss:[],
   exit:"Going to bed at Cloud's apartment ends the chapter. Every Chapter 3 side quest, the darts record and anything below that's unticked closes then.",
+  shop:["Item shop: an <b>Ice</b> materia (500 gil). Barret already has Lightning, and Ice covers the Cerulean Drake quest. Fire is 500 too.","Weapon store: Revival Earrings (500 gil) only if you skipped the demo bonus.","Chadley: Auto-Cure and Wind unlock here. Both are optional; spend on Ice first."],
   tips:["Talk to Chadley after each report. New materia becomes available to <i>buy</i> from him.","Buy Cleanse after Rat Problem; it's cheap then."]
 },
 { n:4, t:"Mad Dash", where:"Upper Sector 7 · Sector 4 plate",
@@ -365,6 +382,7 @@ const CHAPTERS = [
   ],
   boss:[["Reno","Magic does little to him. Block, and let Punisher Mode counter his melee attacks. Destroy the EM Mines fast (Triple Slash works) before they link up."],["Rude","Right after Reno. Weak to <b>Wind</b> (Aero), resists Fire. Dodge his punches instead of blocking."]],
   exit:"Leaving the Sector 5 Undercity with Aerith toward Sector 6 closes this hub, its side quests (and Aerith's dress tier), and Chadley's Chapter 8 stop.",
+  shop:["Moogle Emporium (medals): membership 1, Silver Staff 2, each Vol. I manuscript 5, Gold Saucer disc 1. Then bank 7 medals for Steel Pincers in Chapter 14.","Chadley: buy <b>Steal</b> once Report 7 is done (needed for Eligor in Chapter 11), plus First Strike and ATB Boost.","Materia shop: Costa del Sol disc. A spare Healing for a second healer is worth it if gil allows."],
   tips:["Short on medals? Replay Whack-a-Box, which gives a medal every time, even with a score of 0.","Spend medals on manuscripts (+10 SP each) and the Silver Staff. Keep 7 for Steel Pincers in Chapter 14."]
 },
 { n:9, t:"The Town That Never Sleeps", where:"Wall Market",
@@ -399,6 +417,7 @@ const CHAPTERS = [
   ],
   boss:[["Hell House","Its window color shows its current element. It absorbs that element, so hit it with the opposite: red (Fire) → Ice, white (Ice) → Fire, green (Wind) → Lightning, blue (Lightning) → Wind. Bring all four elements split between Cloud and Aerith. In God House mode only its front arms take damage."]],
   exit:"Once you're picked at the audition the hub is over: unfinished side quests, Colosseum matches and shops close until Chapter 14. Make sure you have <b>Magnify</b>.",
+  shop:["Wall Market weapons store: <b>Hardedge</b> (2,000 gil). Cloud's Infinity's End is worth learning now.","Corneo Colosseum entry fees: Wild Animals 100, Shinra Thugs 300 per attempt.","Item shop: Honeybee Inn disc. Stock Antidotes and Echo Mist for the Colosseum."],
   tips:["Do Cloud's Colosseum challenges before you head into the mansion. Ascension alone is worth it."]
 },
 { n:10, t:"Rough Waters", where:"Sewers under Wall Market",
@@ -447,6 +466,7 @@ const CHAPTERS = [
     ["c13-d-main","disc","Main Theme of FFVII","Vending machine in the Underground Test Site B1 break room, on the story path."],
     ["c13-d-onourway","disc","On Our Way","Item shop in Evergreen Park. Still sold there in Chapter 14."],
   ],
+  shop:["Evergreen Park weapon shop: <b>Big Bertha</b> (2,500 gil). Barret's best physical weapon.","Sector 5 weapon shop: skip the Sorcerer's Armlet (4,800) — there's a free one in a Wall Market alley in Chapter 14. Gothic Bangle and Heavy-Duty Bracer are optional.","Chadley: Enemy Skill materia after Report 16."],
   boss:[["Failed Experiment","Weak to Ice. Ice + Magnify on Barret hits the whole group."]],
   tips:[]
 },
@@ -454,7 +474,7 @@ const CHAPTERS = [
   story:"The biggest open chapter. Every side quest, Colosseum match and shop is here. Take your time.",
   callouts:[
     ["warn","Big payoff","Finish all <b>9</b> side quests to get a second <b>Elemental</b> materia."],
-    ["warn","Last hub","After this chapter the game turns linear. Finish everything here first, and keep <b>10,000 gil</b> for Chapter 16."],
+    ["warn","Last hub","After this chapter the game turns linear. Finish everything here first, and keep <b>12,000 gil</b> for Chapter 16 (EKG Cannon + Combat Simulator)."],
   ],
   items:[
     ["c14-children","quest","Missing Children","Reward: <b>Time</b> materia (Haste)."],
@@ -492,7 +512,8 @@ const CHAPTERS = [
     ["Abzu + Abzu Shoats","Rematch in the sewers. Same plan: Fire."],
     ["Behemoth Type 0 (Secret Medicine)","Break its horn, and block its stomps with Steadfast Block."],
   ],
-  exit:"Last open-world stop. After this the game is linear to the end: all 9 side quests, the Colosseum, Chadley's Reports and shopping. Leave with <b>10,000 gil</b> for the EKG Cannon.",
+  exit:"Last open-world stop. After this the game is linear to the end: all 9 side quests, the Colosseum, Chadley's Reports and shopping. Leave with <b>12,000+ gil</b>: 10,000 for the EKG Cannon and about 2,000 for the Combat Simulator.",
+  shop:["Wall Market weapons store: <b>Mythril Saber</b> for Cloud (Blade Burst).","Moogle Emporium: <b>Steel Pincers</b>, 7 medals.","Colosseum entry fees for everything this chapter add up to about 1,700 gil (100–400 per match).","Then stop spending: arrive at Chapter 16 with <b>12,000+ gil</b> (EKG Cannon 10,000 + Combat Simulator trials at 400 each)."],
   tips:["Do Chocobo Search early. Free rides make the rest of the chapter faster.","Haste (Time) on Cloud or Tifa doubles your ATB flow. It's a game changer.","Two Champion Belts (Chapters 9 + 14): one for Cloud, one for Tifa."]
 },
 { n:15, t:"The Day Midgar Stood Still", where:"Sector 7 wreckage · climb to the plate",
@@ -517,13 +538,14 @@ const CHAPTERS = [
     ["c16-hpup","materia","HP Up materia","64F air ducts (Cloud crawling): take the first left, then left again at the next fork."],
     ["c16-ekg","weapon","EKG Cannon (Barret)","10,000 gil from Hart. Point Blank. Barret's magic weapon."],
     ["c16-maiden","gear","Iron Maiden (armor)","Exhibition Hall: use the keycard on the adjacent door to the right instead of the main one to reveal a hidden chest."],
-    ["c16-sim","colo","Combat Simulator solo fights","Cloud: Cog Bangle. Barret: Supreme Bracer. Tifa: Rune Armlet."],
-    ["c16-sim-team","colo","Combat Simulator team fights","High Flyers: Gil Up materia. Ragbag: EXP Up materia."],
+    ["c16-sim","colo","Combat Simulator solo fights","SOLDIER Trainees, 400 gil each. Cloud: Cog Bangle. Barret: Supreme Bracer. Tifa: Rune Armlet. (Aerith's Geometric Bracelet needs her in the party, so it may have to wait for Chapter Select.)"],
+    ["c16-sim-team","colo","Combat Simulator team fights","400 gil each. High Flyers: Gil Up materia. Team Ragbag: EXP Up materia."],
     ["c16-chadley","quest","Finish every Battle Intel report you can","Summon VR fights: Shiva, Fat Chocobo, Leviathan, Bahamut."],
     ["c16-d-scarlet","disc","Scarlet's Theme","Jukebox next to the Combat Simulator in the 63F lounge."],
   ],
   boss:[["Specimen H0512","Guides split on Lightning (most say it has no weakness and slightly resists it; two say it's weak to it), so Assess it in the first few seconds. Immune to Poison and Slow, so skip Bio. Kill the H0512-OPT minions fast, break its claw to pressure it, and hit it with Braver or Omnistrike to free anyone it grabs. Stop works in the later phases. Steal a Timeworn Talisman."]],
   exit:"Hart's EKG Cannon offer, the Combat Simulator and Chadley all end with this chapter. Report 20 (Bahamut) needs every other report first.",
+  shop:["Hart (62F, outside the Mayor's office): <b>EKG Cannon</b>, 10,000 gil. One-time offer.","Combat Simulator: 400 gil per trial (the Mayor's opener is free). Three SOLDIER Trainees trials + High Flyers + Team Ragbag = 2,000 gil.","Lounge shop: sells the same armor the trials give, so win it instead of buying."],
   tips:["The stair climb is long, but there's nothing extra to find on it."]
 },
 { n:17, t:"Deliverance from Chaos", where:"Hojo's lab · Drum",
@@ -577,8 +599,13 @@ const YUFFIE = [
 { n:2, t:"Covert Ops", where:"Shinra Advanced Weaponry Division",
   story:"Infiltrate Shinra to get the Ultimate Materia. Face Scarlet's Crimson Mare and Nero.",
   items:[
-    ["y2-ribbon","gear","Ribbon (accessory)","Dead end on the east side of an early floor. Blocks status ailments, and it's excellent."],
-    ["y2-volant","gear","Volant Armlet (armor)","Up the short flight of stairs to the left on an early floor."],
+    ["y2-ribbon","gear","Ribbon (accessory)","Generator room: after dropping onto the central pipes, climb the generator wall and follow the path to the dead end on the east side. Blocks status ailments."],
+    ["y2-volant","gear","Volant Armlet (armor)","Go west into the next hallway and take the first left up a short staircase."],
+    ["y2-ninja","materia","Skill Master + Steadfast Block","Past the first power terminal: Skill Master along the walkway to the east, Steadfast Block back to the west."],
+    ["y2-djinn","weapon","Djinn Staff (Sonon)","Purple chest in a hallway past the Magitrooper fight."],
+    ["y2-time","materia","Time materia","On a platform reached by the left pipe and two swing points."],
+    ["y2-carcanet","gear","Healing Carcanet","Chest up the pipe on the left, before crossing the second girder."],
+    ["y2-apup","materia","AP Up materia","From the tube machine Yuffie gets slammed against, before you leave that room."],
     ["y2-condor","miss","Fort Condor: finish what's left","The remaining matches can only be played early in Chapter 2."],
   ],
   boss:[
@@ -655,7 +682,7 @@ const TIPS = [
   ["Slots over stats","Pick armor with the most (and linked) materia slots. Extra slots beat small stat gains."],
   ["Manuscripts = +10 SP","Each one gives that character more SP for weapon upgrades."],
   ["Learn all weapon abilities","Once learned at 100% proficiency, an ability stays usable on every weapon."],
-  ["Save 10,000 gil by Chapter 16","For the one-time EKG Cannon from Hart."],
+  ["Save 12,000 gil by Chapter 16","10,000 for Hart's one-time EKG Cannon, plus about 2,000 for the Combat Simulator trials (400 each)."],
   ["Moogle Medals","Hoard them until Chapter 8, and farm more with Whack-a-Box (one per play). Buy manuscripts and the Silver Staff, and keep 7 for Steel Pincers in Chapter 14."],
   ["Chadley","Hand in Battle Intel at his stops in Chapters 3, 8, 9, 13, 14 and 16. Summon materia from his VR fights is free; other materia he unlocks has to be bought."],
 ]},
@@ -725,9 +752,9 @@ const SUMMONS = [
   ["bi-20","Bahamut","Battle Intel 20: VR fight once all 19 other reports are done."],
 ];
 const ESKILLS = [
-  ["es-siphon","Spirit Siphon","Phantom (Essence Drain). Ch 14 during Missing Children; also the Ch 16 Combat Simulator. Drains HP from nearby enemies."],
-  ["es-destruct","Self-Destruct","Bomb, Smogger, Varghidpolis or Trypapolis. Several Ch 14 spots (Trypapolis during Chocobo Search) and the Colosseum / simulators. Big damage, but KOs the user."],
-  ["es-algid","Algid Aura","Cerulean Drake (Icy Aura). Ch 11 Train Graveyard is too early for most first runs, so pick it up later via Chapter Select (Ch 3 or 11). Adds Ice to attacks."],
+  ["es-siphon","Spirit Siphon","Phantom (Essence Drain). Ch 14 during Missing Children, or the Phantom in the Ch 16 SOLDIER Trainees trials. Drains HP from nearby enemies."],
+  ["es-destruct","Self-Destruct","Bomb, Smogger, Varghidpolis or Trypapolis. Ch 14: Trypapolis during Chocobo Search, or the Bomb in Colosseum Team Payback (round 4). Ch 16: Team Ragbag. Big damage, but KOs the user."],
+  ["es-algid","Algid Aura","Cerulean Drake (Icy Aura). First realistic chance: Ch 14 Colosseum, Team Payback round 4 (same round as the Bomb). Adds Ice to attacks."],
   ["es-breath","Bad Breath","Malboro. Only in the Ch 17 Combat Simulator, which is Hard Mode. Leave it for that run."],
 ];
 // Switch 2 controls by position (the game mirrors the PlayStation layout)
@@ -741,6 +768,30 @@ const CONTROLS = [
   ["Order allies","<kbd>ZL</kbd> / <kbd>ZR</kbd>","Opens the previous / next ally's command menu without switching."],
   ["Switch character","<kbd>↑</kbd> / <kbd>↓</kbd>","D-pad."],
   ["Lock on / swap target","<kbd>R</kbd>-stick press, then flick","Or ← / → on the D-pad."],
+];
+
+// Arena lineups: [id (links to the checklist item, or ""), name, chapter, cost, reward, rounds, tip]
+const LINEUP = [
+ { h:"Corneo Colosseum · Chapter 9", note:"Cloud's solo matches. Aerith's are post-game only.", m:[
+  ["", "Corneo Cup (story)", "Ch 9", "Free", "Story", ["Beastmaster + Bloodhounds","Beck, Butch, Burke + lackeys","Cutter + Sweeper","Hell House"], "Round 1: Fire on the Beastmaster, Ice on the hounds. Round 2: area attacks (Triple Slash). Round 3: Lightning, kill the Sweeper first. Hell House: see the boss notes."],
+  ["c9-c-cloudwild", "Cloud vs. Wild Animals", "Ch 9", "100 gil", "Legacy: Ascension", ["2 Wererats","2 Gorgers + Blugu","2 Guard Dogs","Hedgehog Pie + Grashtrike","Lesser Drake"], "Kill the Blugu first in round 2 (it puts you to sleep) and the Hedgehog Pie first in round 4."],
+  ["c9-c-cloudthugs", "Cloud vs. Shinra Thugs", "Ch 9", "300 gil", "Art of Swordplay Vol. II", ["Security Officer, 2 Grenadiers, Sentry Gun Prototype","2 Flametroopers","2 Sentry Rays + Shock Trooper","2 Slug-Rays + Riot Trooper","Sweeper + Sentry Launcher"], "Lightning magic, and take out the turrets and drones first."],
+ ]},
+ { h:"Corneo Colosseum · Chapter 14", note:"Tifa and Barret's matches plus the team fights. Aerith can't enter in this chapter.", m:[
+  ["c14-c-tifawild", "Tifa vs. Wild Animals", "Ch 14", "100 gil", "Legacy: Dolphin Flurry", ["2 Wererats","2 Gorgers + Blugu","2 Guard Dogs","Hedgehog Pie + Grashtrike","Lesser Drake"], "Same lineup as Cloud's. Blugu and Hedgehog Pie first."],
+  ["c14-c-barwild", "Barret vs. Wild Animals", "Ch 14", "100 gil", "Legacy: Catastrophe", ["2 Wererats","2 Gorgers + Blugu","2 Guard Dogs","Hedgehog Pie + Grashtrike","Lesser Drake"], "Same lineup. Barret can shoot the Blugu before it reaches him."],
+  ["c14-c-tifathugs", "Tifa vs. Shinra Thugs", "Ch 14", "300 gil", "Way of the Fist Vol. II", ["Security Officer, 2 Grenadiers, Sentry Gun Prototype","2 Flametroopers","2 Sentry Rays + Shock Trooper","2 Slug-Rays + Riot Trooper","Sweeper + Sentry Launcher"], "Lightning magic; turrets and drones first."],
+  ["c14-c-barthugs", "Barret vs. Shinra Thugs", "Ch 14", "300 gil", "Sharpshooter's Companion Vol. II", ["Security Officer, 2 Grenadiers, Sentry Gun Prototype","2 Flametroopers","2 Sentry Rays + Shock Trooper","2 Slug-Rays + Riot Trooper","Sweeper + Sentry Launcher"], "Lightning magic; turrets and drones first."],
+  ["", "Two-Person Team vs. Slum Outlaws", "Ch 14", "200 gil", "Clarity Pendant", ["2 Corneo Lackeys + Bandit","Corneo Lackey","2 Bandits + Corneo Lackey","The Huntsman","4 Bandits + The Huntsman"], "Spam Triple Slash. In round 5, kill the Huntsman first and stay off his electric traps."],
+  ["", "Three-Person Team vs. Shinra Warriors", "Ch 14", "300 gil", "Tarot Cards", ["Elite Shock Trooper, Elite Security Officer, Ghost","2 Cripshays + Helitrooper","Sahagin + 2 Elite Grenadiers","Elite Riot Trooper, Sentry Gun, Laser Cannon, Scissorclaw","Queen Grashtrike + 2 Venomantis"], "Wind on the Helitrooper in round 2. In round 4, kill the Sentry Gun and Laser Cannon first. Bring Antidotes for round 5."],
+  ["", "Two-Person Team vs. Team Payback", "Ch 14", "400 gil", "Moogle's Amulet", ["Hedgehog Pie + Hedgehog Pie King","Wrath Hound","Doomrat + Chromogger","Bomb + Cerulean Drake","Mark II Monodrive + Jury-Rigged Cutter"], "Hedgehog Pie King first; Lightning on the Chromogger before its Haywire attack. Round 4 teaches <b>Self-Destruct</b> and <b>Algid Aura</b> if Enemy Skill is equipped."],
+ ]},
+ { h:"Shinra Combat Simulator · Chapter 16", note:"Opens partway up Shinra HQ. Higher ranks (3-C SOLDIER Candidates, Dynamic Duos, Monsters of Legend, Top Secrets) are Hard Mode only.", m:[
+  ["", "Three-Person Team vs. Mayor Is Best", "Ch 16", "Free", "Story / grab bag", ["2 Cutters"], "Lightning materia. Clearing it is what brings Chadley out."],
+  ["", "SOLDIER Trainees (solo, one per character)", "Ch 16", "400 gil each", "Cloud: Cog Bangle · Barret: Supreme Bracer · Tifa: Rune Armlet · Aerith: Geometric Bracelet", ["Sahagin Prince","Phantom","Grungy Bandit","3-C SOLDIER Operator","Cutter"], "The Phantom teaches <b>Spirit Siphon</b> if you have Enemy Skill equipped. Aerith's needs her in the party."],
+  ["", "Two-Person Team vs. High Flyers", "Ch 16", "400 gil", "Gil Up materia", ["16 Bugaboos","2 Slug-Rays + 2 Byobapolis","4 Monodrives + 2 Terpsicolts","2 Elite Helitroopers","Rust Drake"], "Area attacks and Barret's ranged fire. Wind and Lightning on the fliers."],
+  ["", "Three-Person Team vs. Team Ragbag", "Ch 16", "400 gil", "EXP Up materia", ["Abzu Shoat","Trypapolis + 2 Varghidpolis","Hellhound + 2 Bloodhounds","Smogger + 2 Ringmaws","Blast-Ray + Sweeper Prototype"], "Round 2 and 4 enemies can teach <b>Self-Destruct</b>. Fire on the Shoat, Lightning on the machines."],
+ ]},
 ];
 
 const FILTERS = ["all","quest","miss","materia","weapon","script","disc","colo","gear"];
@@ -776,6 +827,7 @@ function chapterHTML(c, y){
       ${total ? `<h3>Loot & checklist</h3><ul class="list">${c.items.map(itemHTML).join("")}</ul>` : ""}
       ${c.boss.length ? `<h3>Bosses</h3>${c.boss.map(([n, t]) => `<div class="boss"><b>${n}</b> — ${t}</div>`).join("")}` : ""}
       ${c.tips.length ? `<h3>Tips</h3><ul class="tips">${c.tips.map(t => `<li>${t}</li>`).join("")}</ul>` : ""}
+      ${c.shop ? `<h3>Shopping</h3><ul class="shop">${c.shop.map(t => `<li>${t}</li>`).join("")}</ul>` : ""}
       ${c.exit ? `<div class="callout exit"><b>Before you leave:</b> ${c.exit}</div>` : ""}
       ${isCur && c.n < CHAPTERS.length ? `<button class="small leave" data-leave="${c.n}">Done with Chapter ${c.n} →</button>` : ""}
     </div></details>`;
@@ -815,7 +867,14 @@ function renderTrack(){
     trackPanel("Battle Intel", "Chadley's 20 reports. Hand them in at his stops in Chapters 3, 8, 9, 13, 14 and 16. Each one unlocks the next. Summon rewards are free; other materia becomes buyable from him.", intel)
   + trackPanel("Manuscripts", "Every manuscript you can get on Normal (+SP for that character). Ticks stay in sync with the chapter lists. Vol. IV–XIV are Hard Mode only.", scripts)
   + trackPanel("Summon materia", "Summon gauge fills in big fights. Pre-order / deluxe summons (Chocobo Chick, Cactuar, Carbuncle) only come with some editions: check Gift Box.", SUMMONS.map(([id, name, note]) => [id, "summon", name, note]))
-  + trackPanel("Enemy Skills", "Needs the Enemy Skill materia (Battle Intel 16) equipped when the enemy uses the move on you. Learning is random, so it may take a few tries.", ESKILLS.map(([id, name, note]) => [id, "eskill", name, note]));
+  + trackPanel("Enemy Skills", "Needs the Enemy Skill materia (Battle Intel 16) equipped when the enemy uses the move on you. Learning is random, so it may take a few tries.", ESKILLS.map(([id, name, note]) => [id, "eskill", name, note]))
+  + `<h2 style="margin-top:8px">Arena lineups</h2>` + lineupHTML();
+}
+function lineupHTML(){
+  return LINEUP.map(g => `<section class="panel"><h2>${g.h}</h2><p class="hint">${g.note}</p>${g.m.map(([id, name, ch, cost, reward, rounds, tip]) => {
+    const done = id && state.got[id];
+    return `<details class="match"><summary><span class="mname">${name}</span><span class="mmeta">${cost} · ${reward}</span><span class="mdone${done ? " ok" : ""}">${id ? (done ? "✓ Done" : "To do") : ""}</span></summary>
+      <ol>${rounds.map(r => `<li>${r}</li>`).join("")}</ol><div class="mtip">${tip}</div></details>`; }).join("")}</section>`).join("");
 }
 function updateTrackCounts(){
   document.querySelectorAll("[data-count]").forEach(el => { const ids = el.dataset.count.split(" "); el.textContent = `${ids.filter(i => state.got[i]).length}/${ids.length}`; });
@@ -834,6 +893,20 @@ function renderTips(){
     + TIPS.map(g => `<section class="panel"><h2>${g.h}</h2><div class="tipgrp">${g.items.map(([h, t]) => `<div class="tip"><b>${h}</b>${t}</div>`).join("")}</div></section>`).join("")
     + `<section class="panel"><h2>Hard Mode (later)</h2><p class="hint">Unlocks after Chapter 18. Saved for your next run: no items, MP only refills at benches, and it has the higher-volume manuscripts and the top Combat Simulator rewards (including Götterdämmerung).</p></section>`;
 }
+// Next-up order: main loot in walkthrough order, then gear, then discs. Second-chance rows hide once the original is ticked.
+const PRIORITY = { gear:1, disc:2 };
+const SECOND_CHANCE = { "c14-feather":"c10-feather" };
+function renderNext(){
+  const c = CHAPTERS.find(x => x.n === state.cur); if (!c) return;
+  const left = c.items.filter(i => !state.got[i[0]] && !state.got[SECOND_CHANCE[i[0]]]).map((i, n) => [i, n])
+    .sort((a, b) => ((PRIORITY[a[0][1]] || 0) - (PRIORITY[b[0][1]] || 0)) || a[1] - b[1]).map(x => x[0]);
+  const top = left.slice(0, 3);
+  const boss = c.boss.map(b => b[0]).join(", ");
+  $("#nextUp").innerHTML = `<h2>Next up <span class="chip">Ch ${c.n} · ${c.t}</span></h2>
+    ${top.length ? `<ul class="list">${top.map(itemHTML).join("")}</ul>` : `<p class="hint">Everything in this chapter is ticked. 🎉</p>`}
+    <div class="nextfoot"><span class="hint">${left.length > 3 ? `+${left.length - 3} more in this chapter` : ""}${boss ? `${left.length > 3 ? " · " : ""}Boss: ${boss}` : ""}</span>
+      ${c.n < CHAPTERS.length ? `<button class="small" data-leave="${c.n}">Done with Ch ${c.n} →</button>` : ""}</div>`;
+}
 function renderTotals(){
   const all = allItems(), got = all.filter(x => state.got[x.i[0]]).length;
   $("#totNum").textContent = `${got} / ${all.length}`;
@@ -849,13 +922,17 @@ function setTab(t){
   if (t === "hunt") renderHunt();
   if (scrollY > 200) window.scrollTo({ top:0 });
 }
-function renderAll(){ renderCurSel(); renderWalk(); renderYuffie(); renderTrack(); renderBuilds(); renderTips(); renderHunt(); renderTotals(); setTab(state.tab); }
+function renderAll(){ renderCurSel(); renderNext(); renderWalk(); renderYuffie(); renderTrack(); renderBuilds(); renderTips(); renderHunt(); renderTotals(); setTab(state.tab); }
 
 // ---------- leaving a chapter ----------
 let pendingCh = null;
+function renderTrackKeepOpen(){
+  const open = [...document.querySelectorAll("#track details.match")].map(d => d.open);
+  const y = scrollY; renderTrack(); document.querySelectorAll("#track details.match").forEach((d, i) => d.open = !!open[i]); scrollTo(0, y);
+}
 function goToChapter(n){
   state.cur = n; state.open[n] = true; save();
-  renderCurSel(); renderWalk(); setTab("walk");
+  renderCurSel(); renderNext(); renderWalk(); setTab("walk");
   const el = document.querySelector(`details.ch[data-key="${n}"]`); if (el) el.scrollIntoView({ behavior:"smooth", block:"start" });
 }
 function requestChapter(n){
@@ -891,6 +968,8 @@ document.addEventListener("change", e => {
       d.classList.toggle("done", ins.length > 0 && n === ins.length);
     });
     renderTotals(); updateTrackCounts();
+    if (!e.target.closest("#nextUp")) renderNext();
+    document.querySelectorAll("details.match").length && (document.querySelector("#track") && (renderTrackKeepOpen()));
   }
 });
 document.addEventListener("toggle", e => {
@@ -902,7 +981,7 @@ $("#curCh").addEventListener("change", e => { const n = +e.target.value; e.targe
 document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-leave]"); if (b) requestChapter(+b.dataset.leave + 1); });
 $("#exitStay").addEventListener("click", () => { pendingCh = null; $("#exitDlg").close(); });
 $("#exitGo").addEventListener("click", () => { const n = pendingCh; pendingCh = null; $("#exitDlg").close(); if (n) goToChapter(n); });
-$("#exitDlg").addEventListener("close", () => { renderWalk(); });
+$("#exitDlg").addEventListener("close", () => { renderWalk(); renderNext(); });
 $("#filters").addEventListener("click", e => { const f = e.target.dataset.f; if (f){ state.filter = f; save(); renderHunt(); } });
 $("#q").addEventListener("input", renderHunt);
 $("#hideGot").addEventListener("change", e => { state.hideGot = e.target.checked; save(); renderHunt(); });
