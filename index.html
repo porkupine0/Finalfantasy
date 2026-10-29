@@ -255,8 +255,8 @@ const CHAPTERS = [
     ["c2-healing","materia","Healing materia","Given automatically in the materia tutorial."],
     ["c2-hpup","materia","HP Up materia","Behind a car on the street right after the first group of enemies."],
     ["c2-dodge","materia","Deadly Dodge materia","In plain sight on the right side of the street after the next group."],
-    ["c2-bangle","gear","Iron Bangle","Chest past a ladder, shortly after the big fight in the market square."],
-    ["c2-wrist","gear","Power Wristguards","One of about seven chests along the escape route. Open every chest you pass."],
+    ["c2-bangle","gear","Iron Bangle","Chest up a ladder after the market-square fight."],
+    ["c2-wrist","gear","Power Wristguards","Chest at the end of a side path on Loveless Street, right after the first fight."],
   ],
   boss:[],
   tips:["Block (R) cuts most damage and still builds ATB. Get used to blocking now.","Cloud's Punisher Mode counters melee attacks while you block. Don't use Punisher against ranged enemies."]
@@ -264,7 +264,7 @@ const CHAPTERS = [
 { n:3, t:"Home Sweet Slum", where:"Sector 7 Slums",
   story:"Seventh Heaven, Tifa, the Sector 7 mercenary odd jobs, and the first side-quest hub. The night ends with the Avalanche meeting.",
   callouts:[
-    ["warn","First hub","The side quests close when you go to sleep and the chapter moves on. Clear them all first. A hidden Discovery appears once all six are done."],
+    ["warn","First hub","The side quests close when you go to sleep and the chapter moves on. Clear them all first. Finishing all six triggers the <b>Alone at Last</b> discovery (Crescent Moon Charm)."],
     ["warn","Tifa's dress","Tifa's Wall Market dress (Chapter 9) depends on finishing this chapter's side quests and on a dialogue choice afterwards. Skip the quests and she gets the 'Mature' dress by default."],
   ],
   items:[
@@ -276,7 +276,9 @@ const CHAPTERS = [
     ["c3-graveyard","quest","Just Flew in from the Graveyard","Appears after the others. The Cerulean Drake is weak to Wind. Reward: Star Bracelet."],
     ["c3-darts","gear","Beat Wedge's darts record (Seventh Heaven)","Beat his score of 8 darts (7 or fewer). Wedge then gives you <b>Luck Up</b> materia near the end of Chapter 4."],
     ["c3-ifrit","materia","Ifrit summon","Automatic: it's waiting in Cloud's room after the Hoodlums fight. Can't be missed."],
-    ["c3-iron","weapon","Iron Blade (Cloud)","Story reward after the Scrap Boulevard trip. Learn Triple Slash on it."],
+    ["c3-alone","quest","Discovery: Alone at Last","Appears after all six side quests. Reward: Crescent Moon Charm."],
+    ["c3-fiends","gear","Fiends Slain scoreboard","Woman in the yellow sports top by the board. 20 kills: Revival Earrings. 50 kills: <b>MP Up</b> materia."],
+    ["c3-iron","weapon","Iron Blade (Cloud)","Automatic: the Sector 7 weapon store hands it to you during the story. Learn Triple Slash on it."],
     ["c3-d-prelude","disc","The Prelude","Item shop owner near Seventh Heaven."],
     ["c3-d-tifa","disc","Tifa's Theme","Jukebox inside Seventh Heaven."],
     ["c3-d-barret","disc","Barret's Theme","Shop by the Sector 7 train station. Still available at the very start of Chapter 4."],
@@ -300,6 +302,7 @@ const CHAPTERS = [
   story:"Sneak through the train tunnels toward Mako Reactor 5, dodging Shinra drones and the train schedule.",
   items:[
     ["c5-metal","weapon","Metal Knuckles (Tifa)","Guaranteed drop from the Crab Warden. Learn Overpower on it."],
+    ["c5-pendant","gear","Star Pendant (poison protection)","Railway Control C4: take the stairs on the left instead of the tunnel, past the Wererats, to a chest at the end of the hall. Equip it for Queen Grashtrike."],
     ["c5-d-stamp","disc","Stamp","Former Rail Yard (Section E): after the two flamethrower turrets, open the side door off the corridor to a break room with a vending machine."],
   ],
   boss:[["Queen Grashtrike","Weak to <b>Ice</b>. Carry Antidotes for its poison. When Royal Webbing binds someone, switch to another character and keep attacking. Save some MP: the Crab Warden comes later this chapter."],["Crab Warden","Weak to Lightning. Cripple its legs to stagger it, then hit the exposed generator, which takes double physical damage."]],
@@ -307,14 +310,14 @@ const CHAPTERS = [
 },
 { n:6, t:"Light the Way", where:"Sector 4 plate · Sun lamps",
   story:"Use the crane arms to restore the sun lamps and work your way through the plate interior.",
-  callouts:[["warn","Big missables","This chapter hides three materia you can't come back for on this run: <b>Elemental</b>, <b>Chocobo &amp; Moogle</b> summon and <b>MP Up</b>."]],
+  callouts:[["warn","Big missables","<b>Elemental</b> (the only other copy needs all 9 Chapter 14 quests) and the <b>Chocobo &amp; Moogle</b> summon are both off the main path here. Don't leave without them."]],
   items:[
-    ["c6-mpup","materia","MP Up materia","Cargo platform area (H-01): move the platform all the way down and take it from on top of the platform."],
-    ["c6-elemental","materia","Elemental materia","Same area: raise the platform again to reach it. One of the best materia in the game."],
-    ["c6-chocomog","materia","Chocobo & Moogle summon","Inside the ventilation fan: go through the north door, then head east."],
+    ["c6-mpup","materia","MP Up materia","Section H by Sun Lamp 3: on a ledge you can reach once the walkway is lowered (same trip as Elemental)."],
+    ["c6-elemental","materia","Elemental materia","After the second sun lamp, climb down, go around the containers and take the next ladder down. Beat the two Queen Grashtrikes (Ice), lower the walkway at the control panel, line it up with the gate, and grab it at the far end. One of the best materia in the game."],
+    ["c6-chocomog","materia","Chocobo & Moogle summon","Upper Level Ventilation: take the small elevator west of the cargo lift, clear the room before the 1-minute timer ends, then grab it behind the fan at the exit."],
     ["c6-medal","gear","Moogle Medal","Chest near Sun Lamp 3, by where you meet up with Biggs."],
-    ["c6-armlet","gear","Mesmeric Armlet","Chest in the plate interior."],
-    ["c6-lmg","weapon","Light Machine Gun (Barret)","Automatic in this chapter. Learn <b>Lifesaver</b> on it, Barret's tanking ability."],
+    ["c6-armlet","gear","Mesmeric Armlet","Chest at the end of the walkway around Sun Lamp 3."],
+    ["c6-lmg","weapon","Light Machine Gun (Barret)","Automatic when you finish the chapter. Learn <b>Lifesaver</b> on it, Barret's tanking ability."],
     ["c5-d-electric","disc","Electric de Chocobo","Plate ventilation area: take the small elevator west of the big cargo lift over to the fan side. Vending machine in the first room (not the one by the cargo lift)."],
   ],
   boss:[],
@@ -325,6 +328,7 @@ const CHAPTERS = [
   callouts:[["info","Keycards","Clear the troops in each room for Shinra keycards, then spend them at the terminals. Remove <b>Big Bomber</b> shells first (biggest help), then AI Programming Cores (slower attacks). M Units only give items."]],
   items:[
     ["c7-sonic","weapon","Sonic Strikers (Tifa)","Purple chest on B5, in the connecting passageway between the B6 and B5 Airbuster labs."],
+    ["c7-magicup","materia","Magic Up materia","Front Gate Security Ops: the Waste Recovery vault. Solve the switch sequence, then use the terminal."],
     ["c7-keys","gear","Find every keycard and spend them on the terminals","Each one removes an Airbuster part."],
     ["c7-d-bombing","disc","Bombing Mission","Vending machine near the Front Gate office (behind the 3-switch door)."],
   ],
@@ -346,6 +350,8 @@ const CHAPTERS = [
     ["c8-hero","quest","A Verified Hero","Whack-a-Box: 10,000 pts = Elixir, 20,000 = Crescent Moon Charm, 30,000 = Spectral Cogwheel. You also get a Moogle Medal every time you play."],
     ["c8-angel","quest","The Angel of the Slums","Reward: 2,000 gil."],
     ["c8-flowers","quest","Discovery: The Language of Flowers","Unlocks once all Chapter 8 quests are done."],
+    ["c8-talisman","gear","Talisman","Church: after the balcony railing breaks, take the next staircase down."],
+    ["c8-mpup","materia","MP Up materia","Aerith's garden, in plain sight after the Rude fight."],
     ["c8-silver","weapon","Silver Staff (Aerith)","Moogle Emporium, 2 medals. Sorcerous Storm."],
     ["c8-m-cloud","script","Art of Swordplay Vol. I (Cloud)","Moogle Emporium, 5 medals."],
     ["c8-m-tifa","script","Way of the Fist Vol. I (Tifa)","Moogle Emporium, 5 medals."],
@@ -355,6 +361,7 @@ const CHAPTERS = [
     ["c8-d-saucer","disc","Gold Saucer","Moogle Emporium, 1 medal."],
     ["c8-d-cait","disc","Cait Sith's Theme","Vending machine at the Sector 5 Undercity station."],
     ["c8-d-tango","disc","Tango of Tears","Jukebox in the Sector 5 Undercity community center."],
+    ["c14-d-shinobi","disc","Descendant of Shinobi","Station Way: head southeast from the Sector 5 Undercity station and talk to the merchant in the west corner of the small gathering area. (Still there in Chapter 14.)"],
   ],
   boss:[["Reno","Magic does little to him. Block, and let Punisher Mode counter his melee attacks. Destroy the EM Mines fast (Triple Slash works) before they link up."],["Rude","Right after Reno. Weak to <b>Wind</b> (Aero), resists Fire. Dodge his punches instead of blocking."]],
   exit:"Leaving the Sector 5 Undercity with Aerith toward Sector 6 closes this hub, its side quests (and Aerith's dress tier), and Chadley's Chapter 8 stop.",
@@ -376,6 +383,10 @@ const CHAPTERS = [
     ["c9-shears","quest","Shears' Counterattack (Madam M's route)","Reward: Arcane Scepter (Aerith)."],
     ["c9-hardedge","weapon","Hardedge (Cloud)","Wall Market weapon shop. Infinity's End."],
     ["c9-magnify","materia","Magnify materia","Collapsed Expressway. Pair it with Healing on Aerith."],
+    ["c9-binding","materia","Binding materia","Path through the Fissure: second mechanical-arm puzzle, the green orb on the right. Drop Aerith on the container."],
+    ["c9-barrier","materia","Barrier materia","Wall Market: from Chadley go north, first left, then left into the narrow alley with the drunks. It's at the end."],
+    ["c9-fury","gear","Fury Ring","Corneo's mansion central foyer: squeeze through the shelves after Cloud, Aerith and Tifa regroup."],
+    ["c9-pendant","gear","Star Pendant","S6-5 Road: take the north exit from Wall Market to the ruins on the left."],
     ["c9-c-cloudwild","colo","Cloud vs. Wild Animals","Reward: Legacy: Ascension (Cloud's level 2 limit)."],
     ["c9-c-cloudthugs","colo","Cloud vs. Shinra Thugs","Reward: Art of Swordplay Vol. II."],
     ["c9-d-honeybee","disc","Honeybee Inn","Item shop/pharmacy near the Wall Market entrance."],
@@ -407,6 +418,9 @@ const CHAPTERS = [
   callouts:[["warn","Steal","Equip <b>Steal</b> before the boss. Eligor carries Aerith's <b>Bladed Staff</b>, and stealing it is the only way to get it. If the fight starts without Steal equipped, pause, retry, and equip it."]],
   items:[
     ["c11-mythril","weapon","Mythril Rod (Aerith)","Switchyard: when the story points you up the ladder on the left, take the path on the right through another train car to a purple chest. Ray of Judgment."],
+    ["c11-hpup","materia","HP Up materia","Switchyard 2, Section B: between two train cars on the left path, before a ladder."],
+    ["c11-subversion","materia","Subversion materia","Automatic for beating the Ghoul."],
+    ["c11-gothic","gear","Gothic Bangle","Maintenance Hall: chest downstairs and to the right of the crane console."],
     ["c11-bladed","weapon","Bladed Staff (Aerith)","Steal it from Eligor. It's easier while he's staggered. Lustrous Shield."],
     ["c11-d-ltbb","disc","Let the Battles Begin!","Vending machine in the Train Graveyard."],
   ],
@@ -423,10 +437,13 @@ const CHAPTERS = [
 },
 { n:13, t:"A Broken World", where:"Sector 6 Slums (Evergreen Park) · underground test site",
   story:"The aftermath. Regroup at Evergreen Park, then go into Shinra's underground test site to find Wedge.",
+  callouts:[["info","Chadley","He's next to the Sector 5 materia shop with Reports 15–19, including the Leviathan VR fight and Report 16 (Enemy Skill)."]],
   items:[
     ["c13-claws","weapon","Mythril Claws (Tifa)","Automatic for beating the Failed Experiment. Chi Trap."],
-    ["c13-bertha","weapon","Big Bertha (Barret)","Weapon vendor at Evergreen Park. Barret's highest-attack weapon. Maximum Fury. Also sold in Chapter 14."],
-    ["c13-cages","gear","Underground cage rewards","Ice materia, Warding materia and a Turbo Ether in the test-site cages."],
+    ["c13-amulet","gear","Mythical Amulet","Aerith's house, upstairs in her bedroom, during Checking on Friends. Strengthens summons."],
+    ["c13-carcanet","gear","Healing Carcanet","Underground Lab B4, Barret's section: after the second ladder, smash the rocks on the left."],
+    ["c13-bertha","weapon","Big Bertha (Barret)","Evergreen Park weapon shop, 2,500 gil. Barret's highest-attack weapon. Maximum Fury. Also sold in Chapter 14."],
+    ["c13-cages","gear","Underground cage rewards","Test Site B2 (Creche): after Barret shoots the propellers, shoot open the cage straight ahead for <b>Ice</b>; the cage on the right past the stairs has <b>Warding</b>."],
     ["c13-d-main","disc","Main Theme of FFVII","Vending machine in the Underground Test Site B1 break room, on the story path."],
     ["c13-d-onourway","disc","On Our Way","Item shop in Evergreen Park. Still sold there in Chapter 14."],
   ],
@@ -453,6 +470,12 @@ const CHAPTERS = [
     ["c14-saber","weapon","Mythril Saber (Cloud)","Wall Market weapon shop. Blade Burst."],
     ["c14-pincers","weapon","Steel Pincers (Barret)","Moogle Emporium, 7 medals. Charging Uppercut."],
     ["c14-feather","weapon","Feathered Gloves (Tifa)","Second chance in the sewers if you missed it in Chapter 10."],
+    ["c14-pedometer","materia","Pedometer materia","Right outside Aerith's house after the Tifa scene. 5,000 steps turns it into <b>AP Up</b>."],
+    ["c14-poison","materia","Poison materia #2","Old Aqueduct 1, southwest corner, in plain sight."],
+    ["c14-sorcerer","gear","Sorcerer's Armlet","Wall Market: the alley to the right of the Honeybee Inn."],
+    ["c14-crystal","gear","Otherworldly Crystal","Corneo's mansion: third door upstairs, then downstairs inside that room."],
+    ["c14-circlet","gear","Circlet","Steel Mountain, behind a red-and-gold dragon gate during Corneo's Secret Stash."],
+    ["c14-ering","gear","Enchanted Ring (steal)","Steal it from the Type-0 Behemoth during Subterranean Menace."],
     ["c14-c-tifawild","colo","Tifa vs. Wild Animals","Reward: Dolphin Flurry (Tifa's level 2 limit)."],
     ["c14-c-barwild","colo","Barret vs. Wild Animals","Reward: Catastrophe (Barret's level 2 limit)."],
     ["c14-c-tifathugs","colo","Tifa vs. Shinra Thugs","Reward: Way of the Fist Vol. II."],
@@ -463,7 +486,6 @@ const CHAPTERS = [
     ["c14-d-fight","disc","Fight On!","Corneo Colosseum souvenir shop."],
     ["c14-d-night","disc","Good Night, Until Tomorrow","Man by the front desk of the inn at the Wall Market entrance."],
     ["c14-d-wutai","disc","Wutai","Man near the construction zone (Wall Market / Sector 6 slums)."],
-    ["c14-d-shinobi","disc","Descendant of Shinobi","Man next to Johnny by the Sector 5 Undercity station. One guide says he's already there in Chapter 8, so check then too."],
     ["c14-d-chase","disc","The Chase","Vending machine in the Aqueduct."],
   ],
   boss:[
@@ -477,6 +499,7 @@ const CHAPTERS = [
   story:"Climb the wreckage of Sector 7 toward the plate and Shinra HQ.",
   items:[
     ["c15-d-lurking","disc","Lurking in the Darkness","Vending machine on the climb up the Sector 7 plate (the crumbling building, 65m up)."],
+    ["c15-ering","gear","Enchanted Ring","110m, Central Tower 8F: use the hidden grapple point to reach the scaffolding, then drop down a floor."],
     ["c15-side","gear","Check every side ledge on the climb","A few chests are hidden on the way up."],
   ],
   boss:[["The Valkyrie","Weak to Lightning and Wind. Keep moving when it lands and spins its arms. It does steady damage at range, so keep everyone's HP up. Drops a Cog Bangle."]],
@@ -486,11 +509,12 @@ const CHAPTERS = [
   story:"Infiltrate Shinra HQ: the lobby, the stairs (or the elevator), Mayor Domino, and the upper floors.",
   callouts:[
     ["warn","EKG Cannon","After you talk to the Mayor, talk to <b>Hart</b> outside the office. He sells the <b>EKG Cannon</b> for <b>10,000 gil</b>, and it's a one-time offer. Have the gil ready."],
-    ["warn","Chadley's last stop","This is the last chapter where you can hand in Battle Intel this run. Report 20 (Bahamut) needs every other report done first."],
+    ["warn","Chadley's last stop","Chadley shows up once you've cleared the first Combat Simulator round. It's your last chance this run to hand in Battle Intel. Report 20 (Bahamut) needs every other report done first."],
     ["info","Combat Simulator","On Normal, the Shinra Combat Simulator is only open in this chapter. (The Chapter 17 visit is Hard Mode only.)"],
   ],
   items:[
     ["c16-purple","weapon","Purple Pain (Tifa)","Lobby, during Tifa's solo section: at the platform with the ladder, skip the ladder and take the monkey bars on the right to a purple chest. True Strike."],
+    ["c16-hpup","materia","HP Up materia","64F air ducts (Cloud crawling): take the first left, then left again at the next fork."],
     ["c16-ekg","weapon","EKG Cannon (Barret)","10,000 gil from Hart. Point Blank. Barret's magic weapon."],
     ["c16-maiden","gear","Iron Maiden (armor)","Exhibition Hall: use the keycard on the adjacent door to the right instead of the main one to reveal a hidden chest."],
     ["c16-sim","colo","Combat Simulator solo fights","Cloud: Cog Bangle. Barret: Supreme Bracer. Tifa: Rune Armlet."],
@@ -508,6 +532,8 @@ const CHAPTERS = [
   items:[
     ["c17-reinforced","weapon","Reinforced Staff (Aerith)","Purple chest in the starting room. ATB Ward, and lots of materia slots."],
     ["c17-twin","weapon","Twin Stinger (Cloud)","Drum Level 3, training area: right after the room with three waves of enemies, in a purple chest to the left of the metal stairs. Counterstance."],
+    ["c17-time","materia","Time materia #2","Central Control Terminal: on the ground left of the console after the lever pull."],
+    ["c17-chain","gear","Chain Bangle","Drum Level 5 (Control Deck): chest in the right corner of the green test-tube room."],
   ],
   boss:[
     ["Brain Pod","Weak to Lightning."],
@@ -631,7 +657,7 @@ const TIPS = [
   ["Learn all weapon abilities","Once learned at 100% proficiency, an ability stays usable on every weapon."],
   ["Save 10,000 gil by Chapter 16","For the one-time EKG Cannon from Hart."],
   ["Moogle Medals","Hoard them until Chapter 8, and farm more with Whack-a-Box (one per play). Buy manuscripts and the Silver Staff, and keep 7 for Steel Pincers in Chapter 14."],
-  ["Chadley","Hand in Battle Intel at his stops in Chapters 3, 8, 9, 14 and 16. Summon materia from his VR fights is free; other materia he unlocks has to be bought."],
+  ["Chadley","Hand in Battle Intel at his stops in Chapters 3, 8, 9, 13, 14 and 16. Summon materia from his VR fights is free; other materia he unlocks has to be bought."],
 ]},
 { h:"Don't-miss list (this run)", items:[
   ["Ch 3","All 6 side quests before you sleep (Tifa's dress), and beat the darts record (Luck Up)."],
@@ -676,8 +702,8 @@ const INTEL = [
   [12,"The Stagger Effect Pt. 3","Raise a stagger damage bonus to 200%.","Parry materia (buy)","Tifa's True Strike and Unbridled Strength push the bonus up fastest."],
   [13,"Refocus Analysis","Use Refocus 2 times.","ATB Assist materia (buy)",""],
   [14,"The Stagger Effect Pt. 4","Stagger 40 enemy types.","ATB Stagger materia (buy)",""],
-  [15,"Combat Simulation: Leviathan","Beat Leviathan in VR (Chapter 14; possibly 13).","<b>Leviathan</b> summon (free)",""],
-  [16,"Monster Bio Pt. 4","Assess 30 enemy types.","Enemy Skill materia (buy)","Finish it early in Chapter 14, <i>before</i> Missing Children, so you can learn Spirit Siphon there."],
+  [15,"Combat Simulation: Leviathan","Beat Leviathan in VR (Chadley's Chapter 13 stop, or 14).","<b>Leviathan</b> summon (free)",""],
+  [16,"Monster Bio Pt. 4","Assess 30 enemy types.","Enemy Skill materia (buy)","Available from Chapter 13. Finish it before Missing Children in Chapter 14 so you can learn Spirit Siphon there."],
   [17,"Weapon Abilities","Learn 16 weapon abilities to 100% proficiency.","Skill Master materia (buy)","Learn each new weapon's ability as soon as you get the weapon."],
   [18,"MP Consumption","Master (max level) all 12 types of Magic materia.","MP Absorption materia (buy)","The long grind. Keep every Magic materia equipped somewhere from early on, and level spares in unused slots."],
   [19,"Monster Variants Pt. 2","Defeat 10 monster variants.","HP Absorption materia (buy)",""],
@@ -695,7 +721,7 @@ const SUMMONS = [
   ["c6-chocomog","Chocobo & Moogle","Ch 6: behind the ventilation fan (small elevator west of the cargo lift; clear the room before the timer runs out)."],
   ["bi-5","Shiva","Battle Intel 5: Chadley's VR fight, from Ch 8. Weak to Fire, absorbs Ice."],
   ["bi-10","Fat Chocobo","Battle Intel 10: VR fight, from Ch 9."],
-  ["bi-15","Leviathan","Battle Intel 15: VR fight, Ch 14. Weak to Lightning."],
+  ["bi-15","Leviathan","Battle Intel 15: VR fight, Ch 13–14. Weak to Lightning."],
   ["bi-20","Bahamut","Battle Intel 20: VR fight once all 19 other reports are done."],
 ];
 const ESKILLS = [
@@ -786,7 +812,7 @@ function renderTrack(){
   const intel = INTEL.map(([n, name, req, rew, note]) => [`bi-${n}`, "intel", `${n}. ${name}`, `${req} <b>Reward:</b> ${rew}${note ? `<br>${note}` : ""}`]);
   const scripts = SCRIPTS.flatMap(([who, list]) => list.map(([id, name, src]) => [id, "script", `${who}: ${name}`, src]));
   $("#track").innerHTML =
-    trackPanel("Battle Intel", "Chadley's 20 reports. Hand them in at his stops in Chapters 3, 8, 9, 14 and 16. Each one unlocks the next. Summon rewards are free; other materia becomes buyable from him.", intel)
+    trackPanel("Battle Intel", "Chadley's 20 reports. Hand them in at his stops in Chapters 3, 8, 9, 13, 14 and 16. Each one unlocks the next. Summon rewards are free; other materia becomes buyable from him.", intel)
   + trackPanel("Manuscripts", "Every manuscript you can get on Normal (+SP for that character). Ticks stay in sync with the chapter lists. Vol. IV–XIV are Hard Mode only.", scripts)
   + trackPanel("Summon materia", "Summon gauge fills in big fights. Pre-order / deluxe summons (Chocobo Chick, Cactuar, Carbuncle) only come with some editions: check Gift Box.", SUMMONS.map(([id, name, note]) => [id, "summon", name, note]))
   + trackPanel("Enemy Skills", "Needs the Enemy Skill materia (Battle Intel 16) equipped when the enemy uses the move on you. Learning is random, so it may take a few tries.", ESKILLS.map(([id, name, note]) => [id, "eskill", name, note]));
