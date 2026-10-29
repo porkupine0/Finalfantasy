@@ -4,7 +4,7 @@ A phone-friendly walkthrough and loot checklist for Final Fantasy VII Remake Int
 
 - **Next up**: the top unticked items for the chapter you're on, right under the progress bar
 - **Backup**: copy a code (or share it to Notes) and paste it back to restore progress on any device
-- **Chapters**: every chapter with its loot checklist, missable warnings, boss tips and shopping notes
+- **Chapters**: a step-by-step walkthrough for every chapter, plus its loot checklist (each side quest has its own steps), missable warnings, boss tips and shopping notes
 - **Checklists**: filter all side quests, materia, weapons, manuscripts, music discs and Colosseum matches; search; hide what you have
 - **Track**: Chadley's 20 Battle Intel reports, every Normal-mode manuscript, summon materia, Enemy Skills, and every Colosseum / Combat Simulator lineup
 - **Before you leave**: moving to the next chapter lists anything still unticked plus what closes behind you
