@@ -1,6 +1,6 @@
 // Offline support for this app: keeps the app itself on the phone, so it opens without internet. Your checklist progress and
 // notes are saved on the phone by the app; nothing passes through here.
-const PREFIX = "ff7r-guide-", SHELL = PREFIX + "shell-v6", FONTS = PREFIX + "fonts-v1";
+const PREFIX = "ff7r-guide-", SHELL = PREFIX + "shell-v7", FONTS = PREFIX + "fonts-v1";
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(SHELL).then(c => c.addAll(["./", "./index.html"].map(u => new Request(u, { cache:"reload" })))).then(() => self.skipWaiting()));

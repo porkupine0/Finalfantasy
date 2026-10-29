@@ -120,6 +120,11 @@ dialog::backdrop{background:rgba(4,10,9,.55)}
 .dlg-foot{padding:12px 16px 16px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:12px}
 .primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .leave{margin-top:2px;align-self:flex-start}
+textarea{width:100%;min-height:84px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all;resize:vertical}
+.bkrow{display:flex;gap:8px;flex-wrap:wrap}
+.bkstat{display:block;margin-top:6px}
+.bkstat.warn{color:var(--warn);font-weight:600}
+.okmsg{color:var(--accent);font-weight:600;font-size:14px;min-height:1.4em}
 .next{border-color:var(--gold)}
 .next h2{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .next .chip{font:700 11px/1.6 "Figtree",sans-serif;text-transform:uppercase;letter-spacing:.06em;background:var(--gold-bg);color:var(--gold);border-radius:6px;padding:1px 7px}
@@ -240,8 +245,25 @@ footer{font-size:13px;color:var(--muted);text-align:center}
   <main id="tips" class="view" style="display:flex;flex-direction:column;gap:12px"></main>
   <main id="yuffie" class="view" style="display:flex;flex-direction:column;gap:10px"></main>
 
-  <footer>Cross-checked against several community guides (Oct 2026). Where guides disagree, the entry says so. Tick boxes save on this device only.<br><button class="small ghost" id="resetBtn">Reset all progress</button></footer>
+  <footer>Cross-checked against several community guides (Oct 2026). Where guides disagree, the entry says so. Tick boxes save on this device only, so back them up now and then.<br>
+    <span class="bkstat" id="bkStat"></span>
+    <div class="bkrow" style="justify-content:center;margin-top:8px"><button class="small" id="backupBtn">Back up / restore progress</button><button class="small ghost" id="resetBtn">Reset all progress</button></div></footer>
 </div>
+
+<dialog id="bkDlg" aria-labelledby="bkTitle"><div class="dlg">
+  <div class="dlg-head"><h2 id="bkTitle">Back up your progress</h2><p class="hint">Copy this code and keep it somewhere safe, like a note or a text to yourself. It holds every tick and your current chapter.</p></div>
+  <div class="dlg-body">
+    <textarea id="bkOut" readonly aria-label="Your backup code"></textarea>
+    <div class="bkrow"><button class="primary" id="bkCopy">Copy code</button><button id="bkShare" hidden>Share…</button></div>
+    <p class="okmsg" id="bkMsg" aria-live="polite"></p>
+    <h3>Restore</h3>
+    <p class="hint">Paste a code from an earlier backup (or another device). It replaces the progress on this device.</p>
+    <textarea id="bkIn" placeholder="Paste a FF7R1… code here" aria-label="Paste a backup code"></textarea>
+    <div class="bkrow"><button id="bkRestore">Restore from code</button></div>
+    <p class="okmsg" id="bkInMsg" aria-live="polite"></p>
+  </div>
+  <div class="dlg-foot"><button id="bkClose">Done</button></div>
+</div></dialog>
 
 <dialog id="exitDlg" aria-labelledby="exitTitle"><div class="dlg">
   <div class="dlg-head"><h2 id="exitTitle">Before you move on</h2><p class="hint" id="exitSub"></p></div>
@@ -905,7 +927,8 @@ function renderNext(){
   $("#nextUp").innerHTML = `<h2>Next up <span class="chip">Ch ${c.n} · ${c.t}</span></h2>
     ${top.length ? `<ul class="list">${top.map(itemHTML).join("")}</ul>` : `<p class="hint">Everything in this chapter is ticked. 🎉</p>`}
     <div class="nextfoot"><span class="hint">${left.length > 3 ? `+${left.length - 3} more in this chapter` : ""}${boss ? `${left.length > 3 ? " · " : ""}Boss: ${boss}` : ""}</span>
-      ${c.n < CHAPTERS.length ? `<button class="small" data-leave="${c.n}">Done with Ch ${c.n} →</button>` : ""}</div>`;
+      ${c.n < CHAPTERS.length ? `<button class="small" data-leave="${c.n}">Done with Ch ${c.n} →</button>` : ""}</div>
+    ${backupDue() ? `<div class="callout exit" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><span><b>Back up:</b> ${state.lastBackup ? "you've ticked a lot since your last backup." : "your ticks only live in this browser."}</span><button class="small" data-backup>Back up now</button></div>` : ""}`;
 }
 function renderTotals(){
   const all = allItems(), got = all.filter(x => state.got[x.i[0]]).length;
@@ -967,7 +990,7 @@ document.addEventListener("change", e => {
       d.querySelector(".chcount").textContent = `${n}/${ins.length}`;
       d.classList.toggle("done", ins.length > 0 && n === ins.length);
     });
-    renderTotals(); updateTrackCounts();
+    renderTotals(); updateTrackCounts(); renderBackupStat();
     if (!e.target.closest("#nextUp")) renderNext();
     document.querySelectorAll("details.match").length && (document.querySelector("#track") && (renderTrackKeepOpen()));
   }
@@ -990,11 +1013,67 @@ $("#themeBtn").addEventListener("click", () => {
   state.theme = dark ? "light" : "dark"; save(); applyTheme();
 });
 $("#resetBtn").addEventListener("click", () => {
-  if (confirm("Clear every checkbox and start over?")){ state.got = {}; save(); renderAll(); }
+  if (confirm("Clear every checkbox and start over? (Make a backup first if you might want them back.)")){ state.got = {}; save(); renderAll(); renderBackupStat(); }
 });
+
+// ---------- backup / restore ----------
+const BK_PREFIX = "FF7R1.";
+function makeCode(){
+  const data = { v:1, got:Object.keys(state.got), cur:state.cur, at:new Date().toISOString().slice(0,10) };
+  const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+  return BK_PREFIX + b64.replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function readCode(raw){
+  let t = (raw || "").replace(/\s+/g,"");
+  const i = t.indexOf(BK_PREFIX); if (i < 0) throw new Error("That doesn't look like a backup code from this app.");
+  t = t.slice(i + BK_PREFIX.length).replace(/-/g,"+").replace(/_/g,"/");
+  while (t.length % 4) t += "=";
+  let data; try { data = JSON.parse(decodeURIComponent(escape(atob(t)))); } catch(e){ throw new Error("The code is incomplete or damaged. Copy the whole thing and try again."); }
+  if (!data || !Array.isArray(data.got)) throw new Error("The code is incomplete or damaged.");
+  return data;
+}
+function backupDue(){
+  const n = Object.keys(state.got).length;
+  return state.lastBackup ? n - (state.ticksAtBackup || 0) >= 15 : n >= 10;
+}
+document.addEventListener("click", e => { if (e.target.closest && e.target.closest("[data-backup]")) $("#backupBtn").click(); });
+function markBackedUp(){ state.lastBackup = new Date().toISOString(); state.ticksAtBackup = Object.keys(state.got).length; save(); renderBackupStat(); renderNext(); }
+function renderBackupStat(){
+  const n = Object.keys(state.got).length, el = $("#bkStat");
+  if (!state.lastBackup){ el.textContent = n ? `${n} ticks, never backed up.` : ""; el.className = "bkstat" + (n >= 10 ? " warn" : ""); return; }
+  const days = Math.floor((Date.now() - new Date(state.lastBackup)) / 864e5), since = n - (state.ticksAtBackup || 0);
+  el.textContent = `Last backup: ${days === 0 ? "today" : days === 1 ? "yesterday" : days + " days ago"}${since > 0 ? ` · ${since} new tick${since === 1 ? "" : "s"} since` : ""}.`;
+  el.className = "bkstat" + (since >= 15 ? " warn" : "");
+}
+$("#backupBtn").addEventListener("click", () => {
+  $("#bkOut").value = makeCode(); $("#bkIn").value = ""; $("#bkMsg").textContent = ""; $("#bkInMsg").textContent = "";
+  $("#bkShare").hidden = !navigator.share;
+  if (typeof $("#bkDlg").showModal === "function") $("#bkDlg").showModal();
+});
+$("#bkCopy").addEventListener("click", async () => {
+  const code = $("#bkOut").value;
+  try { await navigator.clipboard.writeText(code); }
+  catch(e){ $("#bkOut").select(); try { document.execCommand("copy"); } catch(_){} }
+  $("#bkMsg").textContent = "Copied. Paste it into a note or message to keep it."; markBackedUp();
+});
+$("#bkShare").addEventListener("click", async () => {
+  try { await navigator.share({ title:"FF7R guide backup", text:$("#bkOut").value }); $("#bkMsg").textContent = "Shared."; markBackedUp(); } catch(e){}
+});
+$("#bkRestore").addEventListener("click", () => {
+  let data; try { data = readCode($("#bkIn").value); } catch(e){ $("#bkInMsg").textContent = e.message; return; }
+  const valid = new Set([...allItems().map(x => x.i[0]), ...INTEL.map(r => `bi-${r[0]}`), ...SCRIPTS.flatMap(r => r[1].map(x => x[0])), ...SUMMONS.map(r => r[0]), ...ESKILLS.map(r => r[0])]);
+  const ids = data.got.filter(id => valid.has(id));
+  if (!confirm(`Replace this device's progress (${Object.keys(state.got).length} ticks) with the backup${data.at ? ` from ${data.at}` : ""} (${ids.length} ticks)?`)) return;
+  state.got = Object.fromEntries(ids.map(id => [id, 1]));
+  if (data.cur && CHAPTERS.some(c => c.n === data.cur)) state.cur = data.cur;
+  state.open[state.cur] = true; markBackedUp(); renderAll();
+  $("#bkInMsg").textContent = `Restored ${ids.length} ticks. You're on Chapter ${state.cur}.`;
+});
+$("#bkClose").addEventListener("click", () => $("#bkDlg").close());
 
 applyTheme();
 renderAll();
+renderBackupStat();
 if ("serviceWorker" in navigator && window.isSecureContext && location.protocol.startsWith("http")) navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>
 </body>
