@@ -124,6 +124,29 @@ textarea{width:100%;min-height:84px;padding:10px 12px;border-radius:10px;border:
 .bkrow{display:flex;gap:8px;flex-wrap:wrap}
 .bkstat{display:block;margin-top:6px}
 .bkstat.warn{color:var(--warn);font-weight:600}
+.mp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.mp-m{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:5px 6px 5px 10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:var(--surface)}
+.mp-m.has{border-color:var(--accent);background:var(--mako-bg)}
+.mp-m .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.step{display:flex;align-items:center;gap:2px;flex:none}
+.step button{width:30px;height:30px;padding:0;border-radius:8px;font-size:17px;line-height:1}
+.step b{min-width:16px;text-align:center;font-variant-numeric:tabular-nums}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:0}
+.d-green{background:#2fbf71}.d-yellow{background:#e0b021}.d-blue{background:#3f7fe0}.d-purple{background:#9b5de5}
+.mp-char{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.mp-char.off{opacity:.55}
+.mp-slots{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px 10px;align-items:center;font-size:14px}
+.mp-slots .lbl{color:var(--muted);font-size:13px}
+.res{display:flex;flex-direction:column;gap:10px}
+.res .card{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.res .row2{display:grid;grid-template-columns:62px 1fr;gap:8px;align-items:start;font-size:14px}
+.res .row2>span:first-child{color:var(--muted);font-size:13px;padding-top:4px}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chips span{font-size:13px;padding:3px 9px;border-radius:99px;font-weight:600;background:var(--mako-bg);color:var(--mako)}
+.chips span.pair{background:var(--violet-bg);color:var(--violet);border:1px dashed var(--violet)}
+.chips span.empty{background:transparent;color:var(--muted);border:1px dashed var(--line);font-weight:400}
+.why{margin:0;padding-left:18px;font-size:13.5px;color:var(--muted);display:flex;flex-direction:column;gap:3px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
 .okmsg{color:var(--accent);font-weight:600;font-size:14px;min-height:1.4em}
 .next{border-color:var(--gold)}
 .next h2{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
@@ -251,7 +274,7 @@ footer{font-size:13px;color:var(--muted);text-align:center}
 </div>
 
 <dialog id="bkDlg" aria-labelledby="bkTitle"><div class="dlg">
-  <div class="dlg-head"><h2 id="bkTitle">Back up your progress</h2><p class="hint">Copy this code and keep it somewhere safe, like a note or a text to yourself. It holds every tick and your current chapter.</p></div>
+  <div class="dlg-head"><h2 id="bkTitle">Back up your progress</h2><p class="hint">Copy this code and keep it somewhere safe, like a note or a text to yourself. It holds every tick, your current chapter and your materia planner.</p></div>
   <div class="dlg-body">
     <textarea id="bkOut" readonly aria-label="Your backup code"></textarea>
     <div class="bkrow"><button class="primary" id="bkCopy">Copy code</button><button id="bkShare" hidden>Share…</button></div>
@@ -673,6 +696,33 @@ const BUILDS = [
 },
 ];
 
+// ---------- materia planner data ----------
+const MAT = {
+  green:["Fire","Ice","Lightning","Wind","Healing","Cleansing","Revival","Barrier","Poison","Binding","Subversion","Time"],
+  yellow:["Assess","Chakra","Prayer","Steal","ATB Boost","Enemy Skill"],
+  blue:["Elemental","Magnify","Synergy","Warding","HP Absorption","MP Absorption","AP Up"],
+  purple:["HP Up","MP Up","Magic Up","Luck Up","Deadly Dodge","First Strike","Steadfast Block","Provoke","Parry","Refocus","Item Master","Skill Master","ATB Assist","ATB Stagger","Auto-Cure","Gil Up","EXP Up","Pedometer"],
+};
+const MAT_COLOR = Object.fromEntries(Object.entries(MAT).flatMap(([c, l]) => l.map(m => [m, c])));
+const ELEMENTS = ["Lightning","Fire","Ice","Wind"];
+// what the main boss of each chapter is weak to (used when the planner is on "Auto")
+const CH_ELEMENT = {1:"Lightning",2:"Lightning",3:"Wind",4:"Fire",5:"Lightning",6:"Ice",7:"Lightning",8:"Wind",9:"Fire",10:"Fire",11:"Ice",12:"Wind",13:"Ice",14:"Fire",15:"Lightning",16:"Lightning",17:"Lightning",18:"Lightning"};
+// materia picked up from checklist rows
+const ITEM_MATERIA = {"c2-healing":["Healing"],"c2-hpup":["HP Up"],"c2-dodge":["Deadly Dodge"],"c4-revival":["Revival"],"c4-luck":["Luck Up"],"c6-mpup":["MP Up"],"c6-elemental":["Elemental"],"c7-magicup":["Magic Up"],"c8-mpup":["MP Up"],"c9-magnify":["Magnify"],"c9-binding":["Binding"],"c9-barrier":["Barrier"],"c10-poison":["Poison"],"c10-warding":["Warding"],"c11-hpup":["HP Up"],"c11-subversion":["Subversion"],"c13-cages":["Ice","Warding"],"c14-children":["Time"],"c14-elemental":["Elemental"],"c14-pedometer":["Pedometer"],"c14-poison":["Poison"],"c16-hpup":["HP Up"],"c16-sim-team":["Gil Up","EXP Up"],"c17-time":["Time"]};
+const PARTY = ["Cloud","Tifa","Barret","Aerith"];
+// what each character wants in plain slots, best first
+const WANTS = {
+  Cloud:["Healing","HP Up","Assess","ATB Boost","Steadfast Block","Time","First Strike","Deadly Dodge","Skill Master","ATB Stagger","Parry","Steal","Lightning","Fire","Ice","Wind","Luck Up","Refocus","Cleansing","Chakra","Auto-Cure","Revival","Item Master","ATB Assist"],
+  Tifa:["ATB Boost","Time","HP Up","Healing","First Strike","Steadfast Block","Chakra","ATB Stagger","Skill Master","Deadly Dodge","Parry","Luck Up","Ice","Lightning","Fire","Wind","Assess","Refocus","Auto-Cure","Cleansing","Revival","ATB Assist"],
+  Barret:["Healing","HP Up","Provoke","Steadfast Block","Chakra","Lightning","Assess","Barrier","Revival","Enemy Skill","Item Master","ATB Assist","Cleansing","Fire","Ice","Wind","MP Up","First Strike","Steal","Auto-Cure","Refocus","Parry"],
+  Aerith:["Healing","Revival","MP Up","Magic Up","Time","Barrier","Fire","Ice","Lightning","Wind","Cleansing","Prayer","Refocus","Binding","Subversion","Poison","Assess","Item Master","Enemy Skill","ATB Assist","Auto-Cure"],
+};
+const WHY = {
+  "Healing":"Everyone should be able to heal themselves.","HP Up":"Biggest survival boost early on.","Assess":"One per party: shows weaknesses and feeds Chadley's reports.",
+  "ATB Boost":"A quick ATB refill, best on whoever does your damage.","Steadfast Block":"Blocking builds more ATB.","Time":"Haste doubles ATB speed.",
+  "Provoke":"Draws enemies onto Barret, your tank.","Revival":"Someone has to carry Raise; Aerith is the safest holder.","Steal":"Needed for Eligor's Bladed Staff in Chapter 11.",
+  "Enemy Skill":"Keep it equipped so you learn skills when enemies use them.","MP Up":"Casters run dry fast.","Magic Up":"Stronger spells and heals.","First Strike":"Start every fight with ATB.",
+};
 const MATERIA_PRIORITY = [
   ["Elemental","Ch 6 (cargo platform) + Ch 14 (all 9 quests). Weapon = element damage; armor = resistance or absorption."],
   ["Magnify","Ch 9 Collapsed Expressway. Pair with Healing or Barrier."],
@@ -901,8 +951,121 @@ function lineupHTML(){
 function updateTrackCounts(){
   document.querySelectorAll("[data-count]").forEach(el => { const ids = el.dataset.count.split(" "); el.textContent = `${ids.filter(i => state.got[i]).length}/${ids.length}`; });
 }
+function plannerState(){
+  if (!state.planner) state.planner = {
+    inv:{}, el:"auto",
+    party:{ Cloud:true, Tifa:state.cur >= 3, Barret:state.cur >= 3, Aerith:state.cur >= 8 },
+    slots:{ Cloud:{ws:2,wp:0,as:0,ap:1}, Tifa:{ws:2,wp:0,as:0,ap:1}, Barret:{ws:2,wp:0,as:0,ap:1}, Aerith:{ws:2,wp:0,as:0,ap:1} },
+  };
+  return state.planner;
+}
+function fromChecklist(){
+  const add = {};
+  Object.entries(ITEM_MATERIA).forEach(([id, list]) => { if (state.got[id]) list.forEach(m => add[m] = (add[m] || 0) + 1); });
+  return add;
+}
+// Greedy planner: real combos into linked pairs first, then each character takes turns picking from their wish list.
+function planParty(P){
+  const inv = { ...P.inv };
+  const take = m => { if ((inv[m] || 0) > 0){ inv[m]--; return true; } return false; };
+  const chars = PARTY.filter(c => P.party[c]);
+  const out = Object.fromEntries(chars.map(c => [c, { w:{pairs:[], singles:[]}, a:{pairs:[], singles:[]}, why:[] }]));
+  const free = Object.fromEntries(chars.map(c => { const s = P.slots[c]; return [c, { wp:s.wp, ap:s.ap, ws:s.ws, as:s.as }]; }));
+  const el = P.el === "auto" ? CH_ELEMENT[state.cur] || "Lightning" : P.el;
+  const elOwned = (inv[el] || 0) > 0 ? el : ELEMENTS.find(e => (inv[e] || 0) > 0);
+  const order = (prefs) => prefs.filter(c => chars.includes(c));
+  const placePair = (a, b, prefs, where, why) => {
+    if (!((inv[a] || 0) > 0 && (inv[b] || 0) > 0)) return false;
+    for (const c of order(prefs)){
+      const spots = where === "w" ? ["wp"] : where === "a" ? ["ap"] : ["ap", "wp"];
+      for (const sp of spots){
+        if (free[c][sp] > 0){ take(a); take(b); free[c][sp]--; out[c][sp[0]].pairs.push([a, b]); out[c].why.push(why); return true; }
+      }
+    }
+    return false;
+  };
+  placePair("Magnify", "Healing", ["Aerith","Barret","Tifa","Cloud"], "any", "Magnify + Healing: Cure hits the whole party.");
+  if (elOwned) placePair("Elemental", elOwned, ["Cloud","Tifa","Barret","Aerith"], "w", `Elemental + ${elOwned} on the weapon: every hit deals ${elOwned} damage${elOwned === el ? ` (what your Chapter ${state.cur} boss is weak to)` : ""}.`);
+  placePair("Magnify", "Barrier", ["Aerith","Barret"], "any", "Magnify + Barrier: shields the whole party.");
+  if (elOwned) placePair("Elemental", elOwned, ["Tifa","Cloud","Barret"], "w", `Second Elemental + ${elOwned}: another attacker hitting the weakness.`);
+  placePair("MP Absorption", "Fire", ["Aerith"], "any", "MP Absorption + Fire: Aerith gets MP back when Fire lands.");
+  placePair("AP Up", "Healing", ["Aerith","Barret","Cloud","Tifa"], "any", "AP Up doubles the AP for the materia it's linked to.");
+  // leftover linked pairs act as plain slots
+  chars.forEach(c => { free[c].ws += free[c].wp * 2; free[c].as += free[c].ap * 2; free[c].wp = 0; free[c].ap = 0; });
+  const has = (c, m) => ["w","a"].some(k => out[c][k].singles.includes(m) || out[c][k].pairs.some(p => p.includes(m)));
+  const room = c => free[c].ws + free[c].as;
+  const put = (c, m) => { const k = free[c].ws > 0 ? "w" : "a"; free[c][k === "w" ? "ws" : "as"]--; out[c][k].singles.push(m); };
+  const partyHas = m => chars.some(c => has(c, m));
+  const ONE_PER_PARTY = ["Assess","Steal","Enemy Skill","Provoke","Revival"];
+  let progress = true;
+  while (progress){
+    progress = false;
+    for (const c of chars){
+      if (!room(c)) continue;
+      const m = WANTS[c].find(m => (inv[m] || 0) > 0 && !has(c, m) && !(ONE_PER_PARTY.includes(m) && partyHas(m) && m !== "Revival"));
+      if (m){ take(m); put(c, m); if (WHY[m] && !out[c].why.some(w => w.startsWith(m))) out[c].why.push(`${m}: ${WHY[m]}`); progress = true; }
+    }
+  }
+  // fill remaining slots with anything left, so new materia still levels up
+  for (const c of chars){
+    while (room(c)){ const m = Object.keys(inv).find(m => inv[m] > 0 && !has(c, m)); if (!m) break; take(m); put(c, m); }
+  }
+  const spare = Object.entries(inv).filter(([, n]) => n > 0).map(([m, n]) => n > 1 ? `${m} ×${n}` : m);
+  return { out, chars, free, spare, el };
+}
+function stepper(key, val, max){ return `<span class="step"><button type="button" data-step="${key}" data-d="-1" aria-label="Fewer">−</button><b>${val}</b><button type="button" data-step="${key}" data-d="1" aria-label="More" ${val >= max ? "disabled" : ""}>+</button></span>`; }
+function renderPlanner(){
+  const P = plannerState();
+  const slotsHTML = PARTY.map(c => { const s = P.slots[c]; return `<div class="mp-char${P.party[c] ? "" : " off"}">
+      <label class="row" style="font-weight:700"><input type="checkbox" data-party="${c}" ${P.party[c] ? "checked" : ""}> ${c}</label>
+      ${P.party[c] ? `<div class="mp-slots"><span></span><span class="lbl">Single slots</span><span class="lbl">Linked pairs</span>
+        <span class="lbl">Weapon</span>${stepper(`${c}.ws`, s.ws, 8)}${stepper(`${c}.wp`, s.wp, 4)}
+        <span class="lbl">Armor</span>${stepper(`${c}.as`, s.as, 8)}${stepper(`${c}.ap`, s.ap, 4)}</div>` : ""}</div>`; }).join("");
+  const invHTML = Object.entries(MAT).map(([col, list]) => `<div class="mp-grid">${list.map(m => { const n = P.inv[m] || 0;
+      return `<div class="mp-m${n ? " has" : ""}"><span class="nm"><span class="dot d-${col}"></span>${m}</span>${stepper(`inv.${m}`, n, 9)}</div>`; }).join("")}</div>`).join(`<div style="height:6px"></div>`);
+  const total = Object.values(P.inv).reduce((a, b) => a + b, 0);
+  const plan = total ? planParty(P) : null;
+  const chips = (side) => [...side.pairs.map(([a, b]) => `<span class="pair">${a} ⟷ ${b}</span>`), ...side.singles.map(m => `<span>${m}</span>`)].join("");
+  const resHTML = !plan ? `<p class="hint">Add the materia you own above and your setup appears here.</p>`
+    : !plan.chars.length ? `<p class="hint">Tick at least one character above.</p>`
+    : plan.chars.map(c => { const r = plan.out[c], s = P.slots[c];
+      const empty = (n) => n > 0 ? Array(n).fill(`<span class="empty">empty</span>`).join("") : "";
+      const wUsed = r.w.pairs.length * 2 + r.w.singles.length, aUsed = r.a.pairs.length * 2 + r.a.singles.length;
+      return `<div class="card"><b style="font-family:Cinzel,serif">${c}</b>
+        <div class="row2"><span>Weapon</span><div class="chips">${chips(r.w)}${empty(s.ws + s.wp * 2 - wUsed)}${!(s.ws + s.wp) ? `<span class="empty">no slots set</span>` : ""}</div></div>
+        <div class="row2"><span>Armor</span><div class="chips">${chips(r.a)}${empty(s.as + s.ap * 2 - aUsed)}${!(s.as + s.ap) ? `<span class="empty">no slots set</span>` : ""}</div></div>
+        ${r.why.length ? `<ul class="why">${r.why.map(w => `<li>${w}</li>`).join("")}</ul>` : ""}</div>`; }).join("")
+      + (plan.spare.length ? `<p class="hint"><b>Not equipped:</b> ${plan.spare.join(", ")}. Add slots (better armor) or swap them in to level them.</p>` : "");
+  return `<section class="panel" id="planner"><h2>Materia planner</h2>
+    <p class="hint">Set each character's slots to match the Equipment screen (two circles joined by a line = one linked pair), add the materia you own, and it builds the setup. Summons go in their own summon slot, so they're not counted here.</p>
+    <h3>Party &amp; slots</h3>${slotsHTML}
+    <h3>Materia you own</h3>
+    <div class="bkrow"><button class="small" id="mpFill">Add what my checklist says I found</button><button class="small ghost" id="mpClear">Clear</button></div>
+    <p class="hint" style="margin-top:-4px">Bought materia (Fire, Ice, Assess, Chadley's) isn't in the checklist, so add it with +.</p>
+    ${invHTML}
+    <h3>Weapon element</h3>
+    <div class="seg">${["auto", ...ELEMENTS].map(e => `<button class="opt" data-el="${e}" aria-pressed="${P.el === e}">${e === "auto" ? `Auto (Ch ${state.cur}: ${CH_ELEMENT[state.cur]})` : e}</button>`).join("")}</div>
+    <h3>Best setup</h3><div class="res" id="mpRes">${resHTML}</div></section>`;
+}
+function rerenderPlanner(){
+  const y = scrollY; const el = $("#planner"); if (!el) return;
+  el.outerHTML = renderPlanner(); scrollTo(0, y);
+}
+document.addEventListener("click", e => {
+  const t = e.target.closest && e.target.closest("[data-step],[data-el],#mpFill,#mpClear"); if (!t || !t.closest("#planner")) return;
+  const P = plannerState();
+  if (t.dataset.step){
+    const [who, key] = t.dataset.step.split(/\.(.+)/); const d = +t.dataset.d;
+    if (who === "inv"){ P.inv[key] = Math.max(0, Math.min(9, (P.inv[key] || 0) + d)); if (!P.inv[key]) delete P.inv[key]; }
+    else { P.slots[who][key] = Math.max(0, Math.min(key.endsWith("p") ? 4 : 8, P.slots[who][key] + d)); }
+  } else if (t.dataset.el){ P.el = t.dataset.el; }
+  else if (t.id === "mpFill"){ Object.entries(fromChecklist()).forEach(([m, n]) => P.inv[m] = Math.max(P.inv[m] || 0, n)); }
+  else if (t.id === "mpClear"){ if (!confirm("Clear the materia list?")) return; P.inv = {}; }
+  save(); rerenderPlanner();
+});
+document.addEventListener("change", e => { const c = e.target.dataset && e.target.dataset.party; if (!c) return; plannerState().party[c] = e.target.checked; save(); rerenderPlanner(); });
 function renderBuilds(){
-  $("#builds").innerHTML = `<div class="panel"><h2>Materia to prioritize</h2><table><tbody>${MATERIA_PRIORITY.map(([m, w]) => `<tr><th style="white-space:normal;text-transform:none;font-size:14px;color:var(--ink)">${m}</th><td>${w}</td></tr>`).join("")}</tbody></table>
+  $("#builds").innerHTML = renderPlanner() + `<div class="panel"><h2>Materia to prioritize</h2><table><tbody>${MATERIA_PRIORITY.map(([m, w]) => `<tr><th style="white-space:normal;text-transform:none;font-size:14px;color:var(--ink)">${m}</th><td>${w}</td></tr>`).join("")}</tbody></table>
     <p class="hint">Purple tags in a build are linked pairs: put them in two linked slots.</p></div>`
   + BUILDS.map(b => `<section class="panel char"><h2>${b.who} <span class="role">${b.role}</span></h2>
     <table><thead><tr><th>When</th><th>Weapon, materia &amp; accessory</th></tr></thead><tbody>
@@ -955,7 +1118,7 @@ function renderTrackKeepOpen(){
 }
 function goToChapter(n){
   state.cur = n; state.open[n] = true; save();
-  renderCurSel(); renderNext(); renderWalk(); setTab("walk");
+  renderCurSel(); renderNext(); renderWalk(); renderBuilds(); setTab("walk");
   const el = document.querySelector(`details.ch[data-key="${n}"]`); if (el) el.scrollIntoView({ behavior:"smooth", block:"start" });
 }
 function requestChapter(n){
@@ -1019,7 +1182,7 @@ $("#resetBtn").addEventListener("click", () => {
 // ---------- backup / restore ----------
 const BK_PREFIX = "FF7R1.";
 function makeCode(){
-  const data = { v:1, got:Object.keys(state.got), cur:state.cur, at:new Date().toISOString().slice(0,10) };
+  const data = { v:1, got:Object.keys(state.got), cur:state.cur, pl:state.planner || null, at:new Date().toISOString().slice(0,10) };
   const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
   return BK_PREFIX + b64.replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
 }
@@ -1065,6 +1228,7 @@ $("#bkRestore").addEventListener("click", () => {
   const ids = data.got.filter(id => valid.has(id));
   if (!confirm(`Replace this device's progress (${Object.keys(state.got).length} ticks) with the backup${data.at ? ` from ${data.at}` : ""} (${ids.length} ticks)?`)) return;
   state.got = Object.fromEntries(ids.map(id => [id, 1]));
+  if (data.pl && data.pl.inv && data.pl.slots) state.planner = data.pl;
   if (data.cur && CHAPTERS.some(c => c.n === data.cur)) state.cur = data.cur;
   state.open[state.cur] = true; markBackedUp(); renderAll();
   $("#bkInMsg").textContent = `Restored ${ids.length} ticks. You're on Chapter ${state.cur}.`;
