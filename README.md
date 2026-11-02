@@ -8,7 +8,7 @@ A phone-friendly walkthrough and loot checklist for Final Fantasy VII Remake Int
 - **Checklists**: filter all side quests, materia, weapons, manuscripts, music discs and Colosseum matches; search; hide what you have
 - **Track**: Chadley's 20 Battle Intel reports, every Normal-mode manuscript, summon materia, Enemy Skills, and every Colosseum / Combat Simulator lineup
 - **Before you leave**: moving to the next chapter lists anything still unticked plus what closes behind you
-- **Materia planner** (Builds tab): enter each character's weapon/armor slots and the materia you own; it builds the party setup, with linked pairs for real combos
+- **Materia planner** (Builds tab): optimizes the whole party's materia for the chapter you're on (its party, boss weaknesses, absorbs and elements to guard against), using your answers (who you control, healer, Normal/Hard, leveling) and keeping changes small. Tap a materia to lock it. Checked by `node tests/planner-test.js` (brute-force optimality + guide loadouts).
 - **Builds**: weapon / materia / accessory loadouts for Cloud, Tifa, Barret and Aerith by chapter range
 - **Tips**: Switch 2 controls and notes, combat fundamentals, progression, a don't-miss list, minigames
 - **Yuffie**: INTERmission chapters 1–2
