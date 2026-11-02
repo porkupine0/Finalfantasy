@@ -25,7 +25,8 @@ for (let t = 0; t < 400; t++){
   const nPos = party.reduce((n, c) => n + slots[c].ws + slots[c].as + 2 * (slots[c].wp + slots[c].ap), 0);
   if (nPos > 7 || nPos === 0) continue;
   const inv = {}; for (let k = 0; k < 6; k++){ const m = POOL[Math.floor(rnd()*POOL.length)]; inv[m] = Math.min(2, (inv[m] || 0) + 1); }
-  const input = { chars:party, slots, inv, ch:[5,8,13,17,9][t % 5], settings:S() };
+  const maxed = {}; for (const m of Object.keys(inv)) if (rnd() < .35) maxed[m] = 1;
+  const input = { chars:party, slots, inv, maxed, ch:[5,8,13,17,9][t % 5], settings:S({ goal: t % 3 === 0 ? "level" : "win" }) };
   const r = E.optimize(input), b = brute(input); cases++;
   const gap = b - r.score; if (gap < 1e-6) matched++; worst = Math.max(worst, gap);
 }
@@ -89,4 +90,14 @@ console.log(fails ? `\n${fails} FAILED` : "\nALL PASSED");
   const a1 = JSON.stringify(E.optimize({ ...inp, settings:S() }).out), a2 = JSON.stringify(E.optimize({ ...inp, settings:S() }).out);
   ok(a1 === a2, "Same input always gives the same setup");
 }
-console.log(fails ? `\n${fails} FAILED` : "\nALL PASSED (incl. settings)");
+// ---------- 6) Maxed materia ----------
+{ const solo = { chars:["Cloud"], slots:{ Cloud:{ ws:1, wp:0, as:0, ap:0 } }, ch:15, inv:{ "HP Up":2 }, maxed:{ "HP Up":1 } };
+  const w = E.optimize({ ...solo, settings:S({ goal:"win" }) }), l = E.optimize({ ...solo, settings:S({ goal:"level" }) });
+  ok(w.out.Cloud.w.singles[0] === "HP Up ★", "Win the fights: equips the maxed copy over an unmaxed one");
+  ok(l.out.Cloud.w.singles[0] === "HP Up", "Win + level: equips the unmaxed copy so it earns AP");
+  const ap = E.optimize({ chars:["Cloud"], slots:{ Cloud:{ ws:1, wp:1, as:0, ap:0 } }, ch:15, inv:{ "AP Up":1, "HP Up":1, "MP Up":1 }, maxed:{ "HP Up":1 }, settings:S({ goal:"level" }) });
+  ok(ap.out.Cloud.w.pairs.some(p => p[0] === "AP Up" && p[1] === "MP Up"), "AP Up links to the unmaxed materia, never a maxed one");
+  const el = E.optimize({ chars:["Tifa","Barret"], slots:{ Tifa:{ws:1,wp:1,as:0,ap:0}, Barret:{ws:1,wp:1,as:0,ap:0} }, ch:13, inv:{ Elemental:2, Ice:2 }, maxed:{ Elemental:1 }, settings:S({ leader:"Tifa" }) });
+  ok(el.out.Tifa.w.pairs.some(p => p[0] === "Elemental ★"), "The maxed Elemental goes to the strongest attacker");
+}
+console.log(fails ? `\n${fails} FAILED` : "\nALL PASSED (incl. settings + maxed)");

@@ -125,9 +125,10 @@ textarea{width:100%;min-height:84px;padding:10px 12px;border-radius:10px;border:
 .bkstat{display:block;margin-top:6px}
 .bkstat.warn{color:var(--warn);font-weight:600}
 .mp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
-.mp-m{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:5px 6px 5px 10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:var(--surface)}
+.mp-m{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;padding:6px 8px 6px 10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:var(--surface)}
 .mp-m.has{border-color:var(--accent);background:var(--mako-bg)}
-.mp-m .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mp-m .nm{flex:1 0 100%;min-width:0;line-height:1.25}
+.mp-m .step{margin-left:auto}
 .step{display:flex;align-items:center;gap:2px;flex:none}
 .step button{width:30px;height:30px;padding:0;border-radius:8px;font-size:17px;line-height:1}
 .step b{min-width:16px;text-align:center;font-variant-numeric:tabular-nums}
@@ -144,6 +145,8 @@ textarea{width:100%;min-height:84px;padding:10px 12px;border-radius:10px;border:
 .chips{display:flex;flex-wrap:wrap;gap:5px}
 .chips span.empty{font-size:13px;padding:3px 9px;border-radius:99px;background:transparent;color:var(--muted);border:1px dashed var(--line);font-weight:400}
 .q{display:flex;flex-direction:column;gap:4px}
+.maxbtn{padding:0 7px;height:26px;border-radius:8px;font-size:13px;font-weight:700;color:var(--muted);background:transparent;border:1px dashed var(--line)}
+.maxbtn[aria-pressed="true"]{color:var(--gold);background:var(--gold-bg);border:1px solid var(--gold)}
 .chipbtn{font-size:13px;padding:3px 9px;border-radius:99px;font-weight:600;background:var(--mako-bg);color:var(--mako);border:1px solid transparent}
 .chipbtn[aria-pressed="true"]{border-color:var(--gold);background:var(--gold-bg);color:var(--gold)}
 .chips span.pair{display:inline-flex;font-size:13px;font-weight:700;align-items:center;gap:3px;padding:2px;border-radius:99px;border:1px dashed var(--violet);background:var(--violet-bg);color:var(--violet)}
@@ -843,23 +846,30 @@ function buildPositions(P){
   return { pos, pairs };
 }
 
+// How much a maxed copy is worth over an unmaxed one (Curaga, +50% HP, Manawall, -aga spells, Arise...).
+const MAX_BONUS = { "Healing":3, "HP Up":3, "MP Up":2, "Magic Up":2, "Barrier":3, "Revival":2, "Prayer":2, "Chakra":1.5, "Fire":2, "Ice":2, "Lightning":2, "Wind":2, "Cleansing":1, "Poison":1.5, "Time":.5 };
+const LEVEL_BONUS = 3.5; // "Win + level materia": an unmaxed copy earning AP
+const vname = (m, mx) => mx ? m + " ★" : m;
+
 // Compile everything the score needs into flat number tables, so one score is ~1µs.
+// Each owned materia becomes up to two variants: maxed and not maxed.
 function compile(input){
-  const { chars, slots, inv, ch, settings } = input;
+  const { chars, slots, inv, ch, settings } = input, maxed = input.maxed || {};
   const info = chapterInfo(ch, settings.el);
   const s = { ...settings };
   if (!chars.includes(s.leader)) s.leader = chars[0];
   s.healer = s.healerPick && s.healerPick !== "auto" && chars.includes(s.healerPick) ? s.healerPick : (["Aerith","Barret","Tifa","Cloud"].find(c => chars.includes(c)) || chars[0]);
   const { pos, pairs } = buildPositions({ chars, slots });
-  const T = Object.keys(inv).filter(m => inv[m] > 0).sort();
-  const nT = T.length, nC = chars.length, N = pos.length, hard = s.diff === "hard";
+  const B = Object.keys(inv).filter(m => inv[m] > 0).sort(), nB = B.length;   // base materia
+  const V = [];                                                                  // variants
+  B.forEach((m, b) => { const mx = Math.min(maxed[m] || 0, inv[m]); if (mx) V.push({ m, b, max:true, n:mx }); if (inv[m] - mx > 0) V.push({ m, b, max:false, n:inv[m] - mx }); });
+  const nT = V.length, nC = chars.length, N = pos.length, hard = s.diff === "hard", level = s.goal === "level";
+  const T = V.map(v => vname(v.m, v.max)), base = Int16Array.from(V.map(v => v.b)), bid = Object.fromEntries(B.map((m, i) => [m, i]));
   const tid = Object.fromEntries(T.map((m, i) => [m, i]));
-  const owned = Int16Array.from(T.map(m => inv[m]));
+  const owned = Int16Array.from(V.map(v => v.n));
   const posC = Int8Array.from(pos.map(p => chars.indexOf(p.c)));
-  const pairOf = Int16Array.from(pos.map(p => p.pair));
-  const blue = T.map(m => BLUE.has(m));
-  // per-character single values (k-th copy), party-wide materia excluded
-  const single = chars.map(c => T.map(m => {
+  const blue = V.map(v => BLUE.has(v.m));
+  const single = chars.map(c => B.map(m => {
     if (BLUE.has(m) || PARTY_WIDE.has(m)) return [0];
     let v = SINGLE[ROLE[c]][m] || [.5];
     if (hard && m === "Item Master") v = [0];
@@ -867,28 +877,35 @@ function compile(input){
     if (hard && m === "Prayer") v = v.map(x => x * 1.4);
     return [...v, ...[1,2,3,4,5,6,7,8].map(() => v[v.length - 1] * .3)];
   }));
-  // pair bonus table [ci][side][a][b]
-  const pv = chars.map(c => ["w","a"].map(side => T.map(a => T.map(b => pairValue(info, s, c, side, a, b)))));
+  // per-copy bonus for a variant: stronger when maxed; earns AP when not (if you're leveling)
+  const vbonus = V.map(v => v.max ? (BLUE.has(v.m) ? 0 : (MAX_BONUS[v.m] || 1)) : (level && v.m !== "Pedometer" ? LEVEL_BONUS : 0));
+  const pv = chars.map(c => ["w","a"].map(side => V.map(A => V.map(Bv => {
+    let [val, why] = pairValue(info, s, c, side, A.m, Bv.m);
+    const blueV = BLUE.has(A.m) ? A : Bv, other = blueV === A ? Bv : A;
+    if (blueV.m === "Elemental" && val > 0 && blueV.max){ val *= 1.3; why = why.replace("(and absorbs them once Elemental is level 3)", "(maxed Elemental absorbs them)"); }
+    if (blueV.m === "AP Up"){ if (other.max){ val = 0; why = ""; } else if (level) why = `AP Up + ${other.m}: ${other.m} earns double AP toward maxing out.`; }
+    return [val, why]; }))));
   const healerI = chars.indexOf(s.healer), leaderI = chars.indexOf(s.leader);
-  const lockList = (s.locks || []).filter(([c, m]) => chars.includes(c) && m in tid).map(([c, m]) => [chars.indexOf(c), tid[m]]);
+  const lockList = (s.locks || []).filter(([c, m]) => chars.includes(c) && m in bid).map(([c, m]) => [chars.indexOf(c), bid[m]]);
   const last = s.stable && s.last ? chars.map(c => T.map(m => (s.last[c] || {})[m] || 0)) : null;
-  const elems = ELEM.filter(e => e in tid).map(e => { const k = elemKind(info, e);
+  const elems = ELEM.filter(e => e in bid).map(e => { const k = elemKind(info, e);
     const steps = k === "weak" ? [8,5,3].map(v => v * info.weakStrength + (info.weakStrength < 1 ? 2 : 0)) : k === "neutral" ? [3,1.5,1] : [.5,.3,.2];
-    return { e, t:tid[e], k, steps }; });
-  const idx = m => (m in tid ? tid[m] : -1);
-  return { info, s, chars, pos, pairs, T, nT, nC, N, tid, owned, posC, pairOf, blue, single, pv, healerI, leaderI, lockList, last, elems, hard,
+    return { e, t:bid[e], k, steps }; });
+  const idx = m => (m in bid ? bid[m] : -1);
+  return { info, s, chars, pos, pairs, T, V, B, nB, base, nT, nC, N, tid, owned, posC, blue, single, vbonus, pv, healerI, leaderI, lockList, last, elems, hard, level,
     t:{ heal:idx("Healing"), rev:idx("Revival"), assess:idx("Assess"), steal:idx("Steal"), es:idx("Enemy Skill"), clean:idx("Cleansing") } };
 }
 
-// Total score of an assignment A (Int16Array of type ids, -1 = empty). With explain, also returns per-character reasons.
+// Total score of an assignment A (Int16Array of variant ids, -1 = empty). With explain, also returns per-character reasons.
 function score(K, A, explain){
-  const { nC, nT, N } = K, cnt = new Int16Array(nC * nT);
-  for (let i = 0; i < N; i++) if (A[i] >= 0) cnt[K.posC[i] * nT + A[i]]++;
-  let total = 0; const R = explain ? K.chars.map(() => []) : null;
+  const { nC, nT, nB, N } = K, cnt = new Int16Array(nC * nT), cb = new Int16Array(nC * nB);
+  let total = 0;
+  for (let i = 0; i < N; i++){ const t = A[i]; if (t >= 0){ const ci = K.posC[i]; cnt[ci * nT + t]++; cb[ci * nB + K.base[t]]++; total += K.vbonus[t]; } }
+  const R = explain ? K.chars.map(() => []) : null;
   const add = (ci, v, why) => { total += v; if (R && why && v >= 2) R[ci].push([v, why]); };
-  for (let ci = 0; ci < nC; ci++) for (let t = 0; t < nT; t++){ const n = cnt[ci * nT + t]; if (!n) continue; const sv = K.single[ci][t];
-    for (let k = 0; k < n; k++){ const v = sv[Math.min(k, sv.length - 1)]; total += v; if (R && k === 0 && v >= 4){ const w = WHY_SINGLE(K.chars[ci])[K.T[t]]; if (w) R[ci].push([v, w]); } } }
-  const has = (ci, t) => t >= 0 && cnt[ci * nT + t] > 0;
+  for (let ci = 0; ci < nC; ci++) for (let b = 0; b < nB; b++){ const n = cb[ci * nB + b]; if (!n) continue; const sv = K.single[ci][b];
+    for (let k = 0; k < n; k++){ const v = sv[Math.min(k, sv.length - 1)]; total += v; if (R && k === 0 && v >= 4){ const w = WHY_SINGLE(K.chars[ci])[K.B[b]]; if (w) R[ci].push([v, w]); } } }
+  const has = (ci, b) => b >= 0 && cb[ci * nB + b] > 0;
   const hard = K.hard;
   if (K.t.heal >= 0){ const steps = hard ? [10,8,6] : [9,6,4]; let i = 0;
     for (let ci = 0; ci < nC; ci++) if (has(ci, K.t.heal)){ if (ci === K.healerI) add(ci, hard ? 14 : 12, "Healing on your healer."); else { add(ci, steps[Math.min(i, 2)], i === 0 ? "Healing: a backup healer, so one KO doesn't end the fight." : ""); i++; } } }
@@ -900,7 +917,7 @@ function score(K, A, explain){
   if (K.t.steal >= 0) for (let ci = 0; ci < nC; ci++) if (has(ci, K.t.steal)){ add(ci, K.info.steal, K.info.steal >= 10 ? "Steal: needed this chapter (Eligor's Bladed Staff is steal-only)." : K.info.steal >= 4 ? "Steal: there's a valuable steal this chapter." : ""); break; }
   if (K.t.es >= 0) for (let ci = 0; ci < nC; ci++) if (has(ci, K.t.es)){ add(ci, K.info.eskill, K.info.eskill >= 5 ? "Enemy Skill: enemies here teach skills." : ""); break; }
   if (K.t.clean >= 0){ let i = 0; for (let ci = 0; ci < nC; ci++) if (has(ci, K.t.clean)){ add(ci, i ? 1 : (K.info.status.length ? 6 : 4), i ? "" : K.info.status.length ? `Cleansing: cures the ${K.info.status.join("/").toLowerCase()} you'll face.` : ""); i++; } }
-  for (const E of K.elems){ // best caster gets the biggest share
+  for (const E of K.elems){
     const hs = []; for (let ci = 0; ci < nC; ci++) if (has(ci, E.t)) hs.push(ci);
     hs.sort((a, b) => MAG[K.chars[b]] - MAG[K.chars[a]]);
     hs.forEach((ci, i) => add(ci, E.steps[Math.min(i, 2)] * MAG[K.chars[ci]] + (i === 0 ? 1 : 0), i === 0 && E.k === "weak" ? `${E.e} magic: this chapter's fights are weak to ${E.e}.` : ""));
@@ -908,13 +925,13 @@ function score(K, A, explain){
   let seen = null;
   for (const [i, j] of K.pairs){ const a = A[i], b = A[j]; if (a < 0 || b < 0) continue;
     const ci = K.posC[i], sd = K.pos[i].side === "w" ? 0 : 1, pvv = K.pv[ci][sd][a][b]; let v = pvv[0];
-    if (v > 0){ const key = (Math.min(a, b) * nT + Math.max(a, b)) * 2 + sd; seen = seen || new Map(); const n = (seen.get(key) || 0) + 1; seen.set(key, n); if (n > 1) v *= n === 2 ? .7 : .4; }
+    if (v > 0){ const ba = K.base[a], bb = K.base[b], key = (Math.min(ba, bb) * nB + Math.max(ba, bb)) * 2 + sd; seen = seen || new Map(); const n = (seen.get(key) || 0) + 1; seen.set(key, n); if (n > 1) v *= n === 2 ? .7 : .4; }
     add(ci, v, pvv[1]); }
-  for (const [ci, t] of K.lockList) if (has(ci, t)) total += 1000;
+  for (const [ci, b] of K.lockList) if (has(ci, b)) total += 1000;
   if (K.last) for (let ci = 0; ci < nC; ci++) for (let t = 0; t < nT; t++){ const n = cnt[ci * nT + t]; if (n) total += Math.min(n, K.last[ci][t]) * 1.2; }
+  if (R && K.level){ for (let ci = 0; ci < nC; ci++){ const lv = []; for (let t = 0; t < nT; t++) if (cnt[ci * nT + t] && !K.V[t].max && K.vbonus[t] > 0) lv.push(K.V[t].m); if (lv.length) R[ci].push([2.4, `Leveling: ${lv.join(", ")} earn AP here.`]); } }
   return explain ? { total, R, cnt } : total;
 }
-
 // Search: several starts, then local search with swaps, replacements and whole-pair moves; then random "kicks" to escape
 // local optima (iterated local search). Deterministic (seeded), and stops after a time budget.
 function optimize(input, budgetMs){
@@ -963,18 +980,19 @@ function optimize(input, budgetMs){
 function shape(K, best, bestV, kicks){
   const ex = score(K, best, true), { chars, pos, pairs, T, nT } = K, out = {};
   chars.forEach((c, ci) => out[c] = { w:{ pairs:[], singles:[] }, a:{ pairs:[], singles:[] }, why:ex.R[ci].sort((x, y) => y[0] - x[0]).map(r => r[1]).filter((w, i, arr) => arr.indexOf(w) === i) });
+  const isBlue = n => BLUE.has(n.replace(" ★", ""));
   pairs.forEach(([i, j]) => { const p = pos[i], a = best[i] >= 0 ? T[best[i]] : null, b = best[j] >= 0 ? T[best[j]] : null;
-    if (a && b && (BLUE.has(a) !== BLUE.has(b))) out[p.c][p.side].pairs.push(BLUE.has(a) ? [a, b] : [b, a]);
+    if (a && b && (isBlue(a) !== isBlue(b))) out[p.c][p.side].pairs.push(isBlue(a) ? [a, b] : [b, a]);
     else { if (a) out[p.c][p.side].singles.push(a); if (b) out[p.c][p.side].singles.push(b); } });
   pos.forEach((p, i) => { if (p.pair < 0 && best[i] >= 0) out[p.c][p.side].singles.push(T[best[i]]); });
   const u = new Int16Array(nT); best.forEach(t => { if (t >= 0) u[t]++; });
   const spare = T.map((m, t) => [m, K.owned[t] - u[t]]).filter(([, n]) => n > 0).map(([m, n]) => n > 1 ? `${m} ×${n}` : m);
-  const wasted = []; for (const c of chars) for (const sd of ["w","a"]) for (const m of out[c][sd].singles) if (BLUE.has(m)) wasted.push(`${m} (${c})`);
+  const wasted = []; for (const c of chars) for (const sd of ["w","a"]) for (const m of out[c][sd].singles) if (isBlue(m)) wasted.push(`${m} (${c})`);
   const holding = {}; chars.forEach((c, ci) => { holding[c] = {}; T.forEach((m, t) => { const n = ex.cnt[ci * nT + t]; if (n) holding[c][m] = n; }); });
   return { out, chars, spare, wasted, info:K.info, healer:K.s.healer, leader:K.s.leader, score:bestV, holding, kicks };
 }
 // exposed for tests: score of any assignment given as materia names
-function scoreNames(input, names){ const K = compile(input); return score(K, Int16Array.from(names.map(m => m ? K.tid[m] : -1)), false); }
+
 // ==END-PLANNER-ENGINE==
 
 const MATERIA_PRIORITY = [
@@ -1304,7 +1322,7 @@ function updateTrackCounts(){
   document.querySelectorAll("[data-count]").forEach(el => { const ids = el.dataset.count.split(" "); el.textContent = `${ids.filter(i => state.got[i]).length}/${ids.length}`; });
 }
 function plannerState(){
-  const d = { inv:{}, el:"auto", leader:"Cloud", diff:"normal", goal:"win", stable:true, healer:"auto", partyAuto:true, locks:[], last:null,
+  const d = { inv:{}, maxed:{}, el:"auto", leader:"Cloud", diff:"normal", goal:"win", stable:true, healer:"auto", partyAuto:true, locks:[], last:null,
     party:{ Cloud:true, Tifa:true, Barret:true, Aerith:true },
     slots:{ Cloud:{ws:2,wp:1,as:0,ap:0}, Tifa:{ws:2,wp:1,as:0,ap:0}, Barret:{ws:2,wp:1,as:0,ap:0}, Aerith:{ws:2,wp:1,as:0,ap:0} } };
   state.planner = Object.assign(d, state.planner || {});
@@ -1338,20 +1356,22 @@ function renderPlanner(){
         <span class="lbl">Weapon</span>${stepper(`${c}.ws`, s.ws, 8)}${stepper(`${c}.wp`, s.wp, 4)}
         <span class="lbl">Armor</span>${stepper(`${c}.as`, s.as, 8)}${stepper(`${c}.ap`, s.ap, 4)}</div>` : ""}</div>`; }).join("");
   const invHTML = Object.entries(MAT).map(([col, list]) => `<div class="mp-grid">${list.map(m => { const n = P.inv[m] || 0;
-      return `<div class="mp-m${n ? " has" : ""}"><span class="nm"><span class="dot d-${col}"></span>${m}</span>${stepper(`inv.${m}`, n, 9)}</div>`; }).join("")}</div>`).join(`<div style="height:6px"></div>`);
+      const mx = Math.min(P.maxed[m] || 0, n);
+      return `<div class="mp-m${n ? " has" : ""}"><span class="nm"><span class="dot d-${col}"></span>${m}</span>${n ? `<button type="button" class="maxbtn" data-max="${m}" aria-pressed="${mx > 0}" aria-label="${m}: ${mx} of ${n} maxed. Tap to change." title="How many are maxed">★${n > 1 || mx ? mx : ""}</button>` : ""}${stepper(`inv.${m}`, n, 9)}</div>`; }).join("")}</div>`).join(`<div style="height:6px"></div>`);
   return `<section class="panel" id="planner"><h2>Materia planner</h2>
     <p class="hint">Set your slots and materia, answer a few questions, and it works out the best setup for the whole party for the chapter you're on.</p>
     ${ctx}${qs}
     <h3>Party &amp; slots</h3><p class="hint" style="margin-top:-4px">Match the Equipment screen: two circles joined by a line = one linked pair. Summons have their own slot and aren't counted.</p>${slotsHTML}
     <h3>Materia you own</h3>
     <div class="bkrow"><button class="small" id="mpFill">Add what my checklist says I found</button><button class="small ghost" id="mpClear">Clear</button></div>
-    <p class="hint" style="margin-top:-4px">Bought materia (Fire, Ice, Assess, Chadley's) isn't in the checklist, so add it with +.</p>
+    <p class="hint" style="margin-top:-4px">Bought materia (Fire, Ice, Assess, Chadley's) isn't in the checklist, so add it with +. Tap <b>★</b> to mark how many copies are maxed.</p>
     ${invHTML}
     <h3>Best setup</h3><div class="res" id="mpRes"><p class="hint">Working it out…</p></div>
     <details class="walk" style="margin-top:4px"><summary>How it picks</summary><div class="hint" style="padding:0 12px 12px;display:flex;flex-direction:column;gap:6px">
       <p>It scores every possible arrangement of your materia and keeps the highest-scoring one. The scores come from the guides: what each character's role wants (HP Up and Steadfast Block on fighters, MP/Magic Up on Aerith, Provoke on Barret), party coverage (two healers, someone with Revival, Assess on whoever you control), real linked combos (Magnify + Healing, Elemental + the boss's weakness on a weapon, Elemental on armor to block the element you'll be hit with), and this chapter's bosses: what they're weak to, resist and absorb.</p>
       <p>It never pairs Elemental with an element the boss absorbs, and support (blue) materia is only worth anything in a linked pair.</p>
       <p>The search tries every swap, replacement and pair placement until nothing improves, then shakes things up and tries again. In testing it found the true best setup in all 390 cases small enough to check every possibility, and matched the guides' recommended loadouts for Reno, Eligor, the Failed Experiment and Rufus.</p>
+      <p>Maxed materia (★) are stronger (Curaga, +50% HP, Manawall, absorbing Elemental), so "Win the fights" prefers them. "Win + level" prefers unmaxed copies wherever the strength difference is small, since only equipped materia earn AP, and links AP Up to an unmaxed materia, never a maxed one.</p>
       <p>"Keep my setup" adds a small bonus for leaving materia where they already are, so one new materia doesn't reshuffle the whole party. Tap any materia in the result to lock it to that character.</p></div></details></section>`;
 }
 let mpTimer = null, mpLastShown = null;
@@ -1362,9 +1382,9 @@ function computePlanner(){
   if (!chars.length){ el.innerHTML = `<p class="hint">Pick at least one character.</p>`; return; }
   const slots = Object.fromEntries(chars.map(c => [c, P.slots[c]]));
   const prev = P.last;
-  const r = optimize({ chars, slots, inv:P.inv, ch:state.cur, settings:{ leader:P.leader, healerPick:P.healer, diff:P.diff, goal:P.goal, el:P.el, stable:P.stable, last:prev, locks:P.locks } }, 300);
+  const r = optimize({ chars, slots, inv:P.inv, maxed:P.maxed, ch:state.cur, settings:{ leader:P.leader, healerPick:P.healer, diff:P.diff, goal:P.goal, el:P.el, stable:P.stable, last:prev, locks:P.locks } }, 300);
   const locked = (c, m) => P.locks.some(([a, b]) => a === c && b === m);
-  const chip = (c, m, cls) => `<button type="button" class="chipbtn ${cls || ""}" data-lock="${c}|${m}" aria-pressed="${locked(c, m)}" title="Tap to lock to ${c}">${locked(c, m) ? "🔒 " : ""}${m}</button>`;
+  const chip = (c, m, cls) => { const b = m.replace(" ★", ""); return `<button type="button" class="chipbtn ${cls || ""}" data-lock="${c}|${b}" aria-pressed="${locked(c, b)}" title="Tap to lock to ${c}">${locked(c, b) ? "🔒 " : ""}${m}</button>`; };
   const side = (c, sd) => { const o = r.out[c][sd], sl = P.slots[c], used = o.pairs.length * 2 + o.singles.length, cap = sl[sd + "s"] + sl[sd + "p"] * 2;
     return [...o.pairs.map(([a, b]) => `<span class="pair">${chip(c, a, "in")}<span aria-hidden="true">⟷</span>${chip(c, b, "in")}</span>`), ...o.singles.map(m => chip(c, m)),
       ...Array(Math.max(0, cap - used)).fill(`<span class="empty">empty</span>`), ...(cap ? [] : [`<span class="empty">no slots set</span>`])].join(""); };
@@ -1391,14 +1411,15 @@ function rerenderPlanner(){
   el.outerHTML = renderPlanner(); scrollTo(0, y); schedulePlanner();
 }
 document.addEventListener("click", e => {
-  const t = e.target.closest && e.target.closest("[data-step],[data-set],[data-lock],#mpFill,#mpClear,#mpFresh,#mpUnlock"); if (!t || !t.closest("#planner")) return;
+  const t = e.target.closest && e.target.closest("[data-step],[data-set],[data-lock],[data-max],#mpFill,#mpClear,#mpFresh,#mpUnlock"); if (!t || !t.closest("#planner")) return;
   const P = plannerState();
   if (t.dataset.step){
     const [who, key] = t.dataset.step.split(/\.(.+)/); const d = +t.dataset.d;
-    if (who === "inv"){ P.inv[key] = Math.max(0, Math.min(9, (P.inv[key] || 0) + d)); if (!P.inv[key]) delete P.inv[key]; }
+    if (who === "inv"){ P.inv[key] = Math.max(0, Math.min(9, (P.inv[key] || 0) + d)); if (!P.inv[key]) delete P.inv[key]; if ((P.maxed[key] || 0) > (P.inv[key] || 0)){ if (P.inv[key]) P.maxed[key] = P.inv[key]; else delete P.maxed[key]; } }
     else { P.slots[who][key] = Math.max(0, Math.min(key.endsWith("p") ? 4 : 8, P.slots[who][key] + d)); }
   } else if (t.dataset.set){ const k = t.dataset.set, v = t.dataset.v; P[k] = v === "true" ? true : v === "false" ? false : v;
     if (k === "partyAuto" && !P.partyAuto) PARTY.forEach(c => P.party[c] = (CH_CONTEXT[state.cur] || CH_CONTEXT[1]).party.includes(c)); }
+  else if (t.dataset.max){ const m = t.dataset.max, n = P.inv[m] || 0; P.maxed[m] = ((P.maxed[m] || 0) + 1) % (n + 1); if (!P.maxed[m]) delete P.maxed[m]; }
   else if (t.dataset.lock){ const [c, m] = t.dataset.lock.split("|"); const i = P.locks.findIndex(([a, b]) => a === c && b === m); if (i >= 0) P.locks.splice(i, 1); else P.locks.push([c, m]); save(); schedulePlanner(); return; }
   else if (t.id === "mpFill"){ Object.entries(fromChecklist()).forEach(([m, n]) => P.inv[m] = Math.max(P.inv[m] || 0, n)); }
   else if (t.id === "mpClear"){ if (!confirm("Clear the materia list?")) return; P.inv = {}; }
